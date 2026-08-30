@@ -1005,8 +1005,8 @@ export default function PatientKioskView({ theme = "dark" }) {
       }`}>
         {/* Brand & Hospital Subtitle */}
         <div className="flex items-center gap-3">
-          <div className="w-10 h-10 rounded-xl bg-blue-600 text-white flex items-center justify-center font-bold text-2xl shadow-md">
-            +
+          <div className="w-10 h-10 rounded-xl overflow-hidden border border-saffron/40 flex items-center justify-center shadow-md bg-slate-900 shrink-0">
+            <img src="/medikiosk-logo.png" alt="MediKiosk Logo" className="w-full h-full object-cover" />
           </div>
           <div>
             <div className="flex items-center gap-2">

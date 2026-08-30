@@ -137,8 +137,8 @@ export default function Navbar({ activeView = 'overview', onViewChange, theme = 
           onClick={() => handleSwitchView('overview')}
           className="flex items-center gap-2.5 group text-left focus:outline-none shrink-0"
         >
-          <div className="w-8 h-8 rounded-xl bg-saffron/20 border border-saffron/50 flex items-center justify-center group-hover:bg-saffron/30 transition-all shadow-md shadow-saffron/10">
-            <Activity className="w-4 h-4 text-saffron" />
+          <div className="w-9 h-9 rounded-xl overflow-hidden border border-saffron/40 flex items-center justify-center group-hover:scale-105 transition-all shadow-md shadow-saffron/15 bg-slate-900 shrink-0">
+            <img src="/medikiosk-logo.png" alt="MediKiosk Logo" className="w-full h-full object-cover" />
           </div>
           <div>
             <div className={`font-display text-base font-bold tracking-tight flex items-center gap-1.5 ${isLight ? 'text-slate-900' : 'text-white'}`}>

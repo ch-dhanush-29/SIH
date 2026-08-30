@@ -220,8 +220,8 @@ export default function DoctorDashboardView({ theme = "dark" }) {
         isLight ? "bg-white border-slate-200 text-slate-900" : "bg-slate-900 border-slate-700 text-white"
       }`}>
         <div className="flex items-center gap-3.5">
-          <div className="w-12 h-12 bg-emerald-500/20 border border-emerald-400 rounded-2xl flex items-center justify-center text-emerald-500 text-2xl shadow-md">
-            🩺
+          <div className="w-12 h-12 rounded-2xl overflow-hidden border border-emerald-400/40 flex items-center justify-center shadow-md bg-slate-900 shrink-0">
+            <img src="/medikiosk-logo.png" alt="MediKiosk Logo" className="w-full h-full object-cover" />
           </div>
           <div>
             <div className="flex items-center gap-2">
