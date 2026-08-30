@@ -1,0 +1,27 @@
+================================================================================
+                    DISTRICT GENERAL HOSPITAL - NEW DELHI
+                      OUTPATIENT CLINICAL PRESCRIPTION
+================================================================================
+Date: 28-Aug-2026                 OPD Room: 104 (Medicine)
+Patient Name: Rameshwar Prasad    Age: 58 Years / Male
+ABHA ID: 91-2001-0000-0001        Consultant: Dr. R. K. Sharma, MD
+--------------------------------------------------------------------------------
+PROVISIONAL DIAGNOSIS:
+  • Type 2 Diabetes Mellitus (Uncontrolled)
+  • Essential Hypertension
+  • Coronary Artery Disease
+
+Rx (ACTIVE MEDICATIONS):
+  1. Tab Metformin 500mg - 1 BD (Twice daily before meals) x 30 Days
+  2. Tab Telmisartan 40mg - 1 OD (Once daily morning after breakfast) x 30 Days
+  3. Tab Atorvastatin 20mg - 1 HS (Once daily at bedtime) x 30 Days
+  4. Tab Sorbitrate 5mg - 1 SOS (Sublingually on acute chest discomfort)
+
+LABORATORY INVESTIGATION FINDINGS:
+  • HbA1c: 8.4 %                          [REF: < 5.7 %]          -> HIGH / ABNORMAL
+  • Fasting Blood Sugar (FBS): 168 mg/dL   [REF: 70 - 100 mg/dL]   -> HIGH / ABNORMAL
+  • Post Prandial Sugar (PPBS): 242 mg/dL [REF: 90 - 140 mg/dL]   -> CRITICAL HIGH
+  • Serum Creatinine: 0.9 mg/dL           [REF: 0.6 - 1.2 mg/dL]  -> NORMAL
+  • Total Cholesterol: 235 mg/dL          [REF: 125 - 200 mg/dL]  -> HIGH / ABNORMAL
+  • Triglycerides: 195 mg/dL              [REF: 50 - 150 mg/dL]   -> HIGH / ABNORMAL
+================================================================================

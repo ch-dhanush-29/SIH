@@ -1,0 +1,26 @@
+================================================================================
+                    DISTRICT GENERAL HOSPITAL - NEW DELHI
+                      CARDIOLOGY & METABOLIC CLINIC
+================================================================================
+Date: 29-Aug-2026                 OPD Room: 108 (Cardiology)
+Patient Name: Sunita Devi         Age: 47 Years / Female
+ABHA ID: 91-2002-0000-0002        Consultant: Dr. Anita Sengupta, MD (Cardio)
+--------------------------------------------------------------------------------
+PROVISIONAL DIAGNOSIS:
+  • Angina Pectoris
+  • Dyslipidemia
+  • Essential Hypertension
+
+Rx (ACTIVE MEDICATIONS):
+  1. Tab Ecosprin 75mg - 1 OD (Once daily after lunch) x 60 Days
+  2. Tab Rosuvastatin 20mg - 1 HS (Once daily at bedtime) x 60 Days
+  3. Tab Amlodipine 5mg - 1 OD (Once daily morning) x 30 Days
+  4. Tab Metoprolol 25mg - 1 BD (Twice daily morning & night) x 30 Days
+
+LABORATORY INVESTIGATION FINDINGS:
+  • Total Cholesterol: 260 mg/dL          [REF: 125 - 200 mg/dL]  -> CRITICAL HIGH
+  • LDL Cholesterol: 165 mg/dL            [REF: 60 - 100 mg/dL]   -> HIGH / ABNORMAL
+  • Triglycerides: 220 mg/dL              [REF: 50 - 150 mg/dL]   -> HIGH / ABNORMAL
+  • Serum Creatinine: 0.8 mg/dL           [REF: 0.6 - 1.2 mg/dL]  -> NORMAL
+  • Troponin-I: 0.02 ng/mL                [REF: < 0.04 ng/mL]     -> NORMAL
+================================================================================

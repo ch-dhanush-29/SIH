@@ -1,0 +1,55 @@
+timestamp,session_id,patient_id,consent_type,action,purpose
+2026-08-27 23:05:22,session_sim_101,patient_arjun_99,SESSION_START,SUCCESS,Initiate new clinical intake session
+2026-08-27 23:05:22,session_sim_101,patient_arjun_99,GRANT_DEMOGRAPHICS,SUCCESS,Verify identity using ABHA scan-and-share
+2026-08-27 23:05:22,session_sim_101,patient_arjun_99,GRANT_VOICE_INTAKE,SUCCESS,Clinical history voice intake interview
+2026-08-27 23:05:22,session_sim_101,patient_arjun_99,GRANT_DOCUMENT_SCAN,SUCCESS,Digitize and index past clinical prescriptions
+2026-08-27 23:05:22,session_sim_101,patient_arjun_99,GRANT_HIS_ABDM_SHARE,SUCCESS,Route summary to Hospital Information System & ABDM
+2026-08-27 23:05:32,session_sim_emergency,patient_emergency_01,SESSION_START,SUCCESS,Initiate new clinical intake session
+2026-08-27 23:05:32,session_sim_emergency,patient_emergency_01,GRANT_DEMOGRAPHICS,SUCCESS,Verify identity
+2026-08-27 23:05:32,session_sim_emergency,patient_emergency_01,GRANT_VOICE_INTAKE,SUCCESS,Clinical history voice intake
+2026-08-27 23:05:32,session_sim_emergency,patient_emergency_01,SESSION_PURGE,SUCCESS,Purging session details from memory (DPDP requirement)
+2026-08-27 23:05:32,session_sim_standard,patient_standard_02,SESSION_START,SUCCESS,Initiate new clinical intake session
+2026-08-27 23:05:32,session_sim_standard,patient_standard_02,GRANT_DEMOGRAPHICS,SUCCESS,Verify identity using ABHA scan-and-share
+2026-08-27 23:05:32,session_sim_standard,patient_standard_02,GRANT_VOICE_INTAKE,SUCCESS,Clinical history voice intake interview
+2026-08-27 23:05:32,session_sim_standard,patient_standard_02,GRANT_DOCUMENT_SCAN,SUCCESS,Digitize and index past clinical prescriptions
+2026-08-27 23:05:32,session_sim_standard,patient_standard_02,GRANT_HIS_ABDM_SHARE,SUCCESS,Route summary to Hospital Information System
+2026-08-27 23:05:43,session_sim_emergency,patient_emergency_01,SESSION_START,SUCCESS,Initiate new clinical intake session
+2026-08-27 23:05:43,session_sim_emergency,patient_emergency_01,GRANT_DEMOGRAPHICS,SUCCESS,Verify identity
+2026-08-27 23:05:43,session_sim_emergency,patient_emergency_01,GRANT_VOICE_INTAKE,SUCCESS,Clinical history voice intake
+2026-08-27 23:05:43,session_sim_emergency,patient_emergency_01,SESSION_PURGE,SUCCESS,Purging session details from memory (DPDP requirement)
+2026-08-27 23:05:43,session_sim_standard,patient_standard_02,SESSION_START,SUCCESS,Initiate new clinical intake session
+2026-08-27 23:05:43,session_sim_standard,patient_standard_02,GRANT_DEMOGRAPHICS,SUCCESS,Verify identity using ABHA scan-and-share
+2026-08-27 23:05:43,session_sim_standard,patient_standard_02,GRANT_VOICE_INTAKE,SUCCESS,Clinical history voice intake interview
+2026-08-27 23:05:43,session_sim_standard,patient_standard_02,GRANT_DOCUMENT_SCAN,SUCCESS,Digitize and index past clinical prescriptions
+2026-08-27 23:05:43,session_sim_standard,patient_standard_02,GRANT_HIS_ABDM_SHARE,SUCCESS,Route summary to Hospital Information System
+2026-08-27 23:05:43,session_sim_standard,patient_standard_02,SESSION_PURGE,SUCCESS,Purging session details from memory (DPDP requirement)
+2026-08-27 23:12:10,session_sim_emergency,patient_emergency_01,SESSION_START,SUCCESS,Initiate new clinical intake session
+2026-08-27 23:12:10,session_sim_emergency,patient_emergency_01,GRANT_DEMOGRAPHICS,SUCCESS,Verify identity
+2026-08-27 23:12:10,session_sim_emergency,patient_emergency_01,GRANT_VOICE_INTAKE,SUCCESS,Clinical history voice intake
+2026-08-27 23:12:10,session_sim_emergency,patient_emergency_01,SESSION_PURGE,SUCCESS,Purging session details from memory (DPDP requirement)
+2026-08-27 23:12:10,session_sim_standard,patient_standard_02,SESSION_START,SUCCESS,Initiate new clinical intake session
+2026-08-27 23:12:10,session_sim_standard,patient_standard_02,GRANT_DEMOGRAPHICS,SUCCESS,Verify identity using ABHA scan-and-share
+2026-08-27 23:12:10,session_sim_standard,patient_standard_02,GRANT_VOICE_INTAKE,SUCCESS,Clinical history voice intake interview
+2026-08-27 23:12:10,session_sim_standard,patient_standard_02,GRANT_DOCUMENT_SCAN,SUCCESS,Digitize and index past clinical prescriptions
+2026-08-27 23:12:10,session_sim_standard,patient_standard_02,GRANT_HIS_ABDM_SHARE,SUCCESS,Route summary to Hospital Information System
+2026-08-27 23:12:10,session_sim_standard,patient_standard_02,SESSION_PURGE,SUCCESS,Purging session details from memory (DPDP requirement)
+2026-08-29 22:33:40,session_sim_emergency,patient_emergency_01,SESSION_START,SUCCESS,Initiate new clinical intake session
+2026-08-29 22:33:40,session_sim_emergency,patient_emergency_01,GRANT_DEMOGRAPHICS,SUCCESS,Verify identity
+2026-08-29 22:33:40,session_sim_emergency,patient_emergency_01,GRANT_VOICE_INTAKE,SUCCESS,Clinical history voice intake
+2026-08-29 22:33:40,session_sim_emergency,patient_emergency_01,SESSION_PURGE,SUCCESS,Purging session details from memory (DPDP requirement)
+2026-08-29 22:33:40,session_sim_standard,patient_standard_02,SESSION_START,SUCCESS,Initiate new clinical intake session
+2026-08-29 22:33:40,session_sim_standard,patient_standard_02,GRANT_DEMOGRAPHICS,SUCCESS,Verify identity using ABHA scan-and-share
+2026-08-29 22:33:40,session_sim_standard,patient_standard_02,GRANT_VOICE_INTAKE,SUCCESS,Clinical history voice intake interview
+2026-08-29 22:33:40,session_sim_standard,patient_standard_02,GRANT_DOCUMENT_SCAN,SUCCESS,Digitize and index past clinical prescriptions
+2026-08-29 22:33:40,session_sim_standard,patient_standard_02,GRANT_HIS_ABDM_SHARE,SUCCESS,Route summary to Hospital Information System
+2026-08-29 22:33:40,session_sim_standard,patient_standard_02,SESSION_PURGE,SUCCESS,Purging session details from memory (DPDP requirement)
+2026-08-29 22:41:34,session_sim_emergency,patient_emergency_01,SESSION_START,SUCCESS,Initiate new clinical intake session
+2026-08-29 22:41:34,session_sim_emergency,patient_emergency_01,GRANT_DEMOGRAPHICS,SUCCESS,Verify identity
+2026-08-29 22:41:34,session_sim_emergency,patient_emergency_01,GRANT_VOICE_INTAKE,SUCCESS,Clinical history voice intake
+2026-08-29 22:41:34,session_sim_emergency,patient_emergency_01,SESSION_PURGE,SUCCESS,Purging session details from memory (DPDP requirement)
+2026-08-29 22:41:34,session_sim_standard,patient_standard_02,SESSION_START,SUCCESS,Initiate new clinical intake session
+2026-08-29 22:41:34,session_sim_standard,patient_standard_02,GRANT_DEMOGRAPHICS,SUCCESS,Verify identity using ABHA scan-and-share
+2026-08-29 22:41:34,session_sim_standard,patient_standard_02,GRANT_VOICE_INTAKE,SUCCESS,Clinical history voice intake interview
+2026-08-29 22:41:34,session_sim_standard,patient_standard_02,GRANT_DOCUMENT_SCAN,SUCCESS,Digitize and index past clinical prescriptions
+2026-08-29 22:41:34,session_sim_standard,patient_standard_02,GRANT_HIS_ABDM_SHARE,SUCCESS,Route summary to Hospital Information System
+2026-08-29 22:41:34,session_sim_standard,patient_standard_02,SESSION_PURGE,SUCCESS,Purging session details from memory (DPDP requirement)

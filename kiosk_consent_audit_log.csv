@@ -1,0 +1,6 @@
+timestamp,session_id,patient_id,consent_type,action,purpose
+2026-08-29 22:51:00,sess_1788024060839,P101,SESSION_START,SUCCESS,Initiate new clinical intake session
+2026-08-29 22:51:00,sess_1788024060839,P101,GRANT_DEMOGRAPHICS,SUCCESS,Patient consented during kiosk intake
+2026-08-29 22:51:00,sess_1788024060839,P101,GRANT_VOICE_INTAKE,SUCCESS,Patient consented during kiosk intake
+2026-08-29 22:51:00,sess_1788024060839,P101,GRANT_DOCUMENT_SCAN,SUCCESS,Patient consented during kiosk intake
+2026-08-29 22:51:00,sess_1788024060839,P101,GRANT_HIS_ABDM_SHARE,SUCCESS,Patient consented during kiosk intake

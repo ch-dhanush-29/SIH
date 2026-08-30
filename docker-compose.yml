@@ -1,0 +1,14 @@
+version: '3.8'
+
+services:
+  medikiosk:
+    build: .
+    container_name: medikiosk-service
+    ports:
+      - "8000:8000"
+    environment:
+      - ENVIRONMENT=production
+      - ABDM_GATEWAY_URL=https://sandbox.abdm.gov.in/gway
+    restart: unless-stopped
+    volumes:
+      - ./logs:/app/logs

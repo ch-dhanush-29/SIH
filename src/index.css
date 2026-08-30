@@ -1,0 +1,335 @@
+@import url('https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;600;700;800&family=Hind:wght@300;400;500;600;700&family=Noto+Sans+Mono:wght@400;500;600;700&display=swap');
+
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+/* ── CSS Design Tokens ─────────────────────────────────────────── */
+:root {
+  /* Default: Dark Theme */
+  --bg-app:        #020617;
+  --bg-section-1:  #0b1320;
+  --bg-section-2:  #0f172a;
+  --bg-card:       #111d2e;
+  --bg-card-sub:   #18283d;
+  --text-main:     #f8fafc;
+  --text-muted:    #94a3b8;
+  --text-faint:    #64748b;
+  --border-main:   #1e293b;
+  --border-sub:    #334155;
+
+  --color-ink:     #f8fafc;
+  --color-ink2:    #e2e8f0;
+  --color-ink3:    #cbd5e1;
+  --color-paper:   #f8fafc;
+  --color-saffron: #E8930A;
+  --color-sage:    #4A7C6F;
+  --color-mist:    #C8D8E4;
+  --color-alert:   #B5341C;
+
+  --font-display: 'Playfair Display', Georgia, serif;
+  --font-sans:    'Hind', system-ui, sans-serif;
+  --font-mono:    'Noto Sans Mono', 'Courier New', monospace;
+}
+
+html.light {
+  /* Light Theme */
+  --bg-app:        #f8fafc;
+  --bg-section-1:  #ffffff;
+  --bg-section-2:  #f1f5f9;
+  --bg-card:       #ffffff;
+  --bg-card-sub:   #f8fafc;
+  --text-main:     #0f172a;
+  --text-muted:    #475569;
+  --text-faint:    #64748b;
+  --border-main:   #e2e8f0;
+  --border-sub:    #cbd5e1;
+
+  --color-ink:     #0f172a;
+  --color-ink2:    #1e293b;
+  --color-ink3:    #334155;
+  --color-paper:   #0f172a;
+  --color-mist:    #475569;
+  --color-sage:    #0d9488;
+  --color-saffron: #d97706;
+}
+
+/* ── Base Layer ─────────────────────────────────────────────────── */
+@layer base {
+  html {
+    font-family: var(--font-sans);
+    scroll-behavior: auto;
+    font-size: 17px;
+    transition: background-color 0.25s ease, color 0.25s ease;
+  }
+
+  html.dark, html.dark body {
+    background-color: #020617;
+    color: #f8fafc;
+  }
+
+  html.light, html.light body {
+    background-color: #f8fafc;
+    color: #0f172a;
+  }
+
+  *, *::before, *::after {
+    box-sizing: border-box;
+    -webkit-tap-highlight-color: transparent;
+    caret-color: transparent !important;
+  }
+
+  /* Allow text selection and copying across all website text without I-beam cursor or blinking caret */
+  body, div, span, p, h1, h2, h3, h4, h5, h6, section, article, main, header, footer,
+  table, td, th, tr, tbody, thead, code, pre, label, li, ul, ol, blockquote, strong, em {
+    -webkit-user-select: text !important;
+    -moz-user-select: text !important;
+    -ms-user-select: text !important;
+    user-select: text !important;
+    cursor: default !important;
+    caret-color: transparent !important;
+  }
+
+  /* Interactive clickable elements keep pointer cursor but prevent text selection dragging */
+  button, a, [role="button"], input[type="button"], input[type="submit"], select {
+    cursor: pointer !important;
+    -webkit-user-select: none !important;
+    user-select: none !important;
+    caret-color: transparent !important;
+  }
+
+  /* Text inputs allow text editing and caret */
+  input[type="text"], input[type="number"], input[type="email"], input[type="search"], textarea, [contenteditable="true"] {
+    caret-color: auto !important;
+    cursor: text !important;
+    -webkit-user-select: text !important;
+    user-select: text !important;
+  }
+
+  /* Remove default browser focus outlines and blinking box carets */
+  *:focus, *:focus-visible, *:focus-within {
+    outline: none !important;
+    box-shadow: none !important;
+  }
+
+  button, a, input, select, textarea, div {
+    -webkit-tap-highlight-color: transparent;
+  }
+
+  /* Skip-to-content link */
+  .skip-link {
+    position: absolute;
+    top: -100%;
+    left: 1rem;
+    background: #E8930A;
+    color: #0b1320;
+    padding: 0.5rem 1rem;
+    font-weight: 700;
+    border-radius: 0 0 6px 6px;
+    z-index: 9999;
+    font-family: var(--font-sans);
+    transition: top 0.15s;
+  }
+  .skip-link:focus {
+    top: 0;
+  }
+
+  h1, h2, h3, h4, h5, h6 {
+    font-family: var(--font-display);
+    letter-spacing: -0.01em;
+  }
+
+  code, .data-text {
+    font-family: var(--font-mono);
+  }
+}
+
+/* ── Sections & Cards Styling (Universal Light & Dark) ─────────── */
+.section-dark {
+  background-color: var(--bg-section-1);
+  color: var(--text-main);
+  transition: background-color 0.25s ease, color 0.25s ease;
+}
+
+.section-light {
+  background-color: var(--bg-section-2);
+  color: var(--text-main);
+  transition: background-color 0.25s ease, color 0.25s ease;
+}
+
+/* ── Dark Mode Defaults ─────────────────────────────────────────── */
+html.dark {
+  .section-dark {
+    background-color: #020617;
+    color: #f8fafc;
+  }
+  .section-light {
+    background-color: #0b1320;
+    color: #f8fafc;
+  }
+  .text-ink {
+    color: #f8fafc !important;
+  }
+  .text-ink\/70, .text-ink\/80 {
+    color: #94a3b8 !important;
+  }
+  .border-ink\/10 {
+    border-color: rgba(255, 255, 255, 0.1) !important;
+  }
+}
+
+/* ── Light Mode High-Contrast Overrides ─────────────────────────── */
+html.light {
+  /* Section Backgrounds */
+  .section-dark {
+    background-color: #ffffff !important;
+    color: #0f172a !important;
+  }
+  .section-light {
+    background-color: #f8fafc !important;
+    color: #0f172a !important;
+  }
+
+  /* Headings & Text */
+  h1, h2, h3, h4, h5, h6 {
+    color: #0f172a !important;
+  }
+
+  p, span, li, label, td, th, div {
+    color: inherit;
+  }
+
+  .text-paper,
+  .text-paper\/90,
+  .text-paper\/80,
+  .text-paper\/75,
+  .text-paper\/70,
+  .text-paper\/60 {
+    color: #1e293b !important;
+  }
+
+  .text-ink {
+    color: #0f172a !important;
+  }
+
+  .text-ink\/70, .text-ink\/80 {
+    color: #475569 !important;
+  }
+
+  .text-white {
+    color: #0f172a !important;
+  }
+
+  .text-slate-400, .text-slate-500, .text-gray-400, .text-gray-500 {
+    color: #475569 !important;
+  }
+
+  .text-slate-300, .text-gray-300 {
+    color: #334155 !important;
+  }
+
+  .text-slate-200, .text-gray-200 {
+    color: #1e293b !important;
+  }
+
+  /* Cards & Containers in Light Mode */
+  .bg-slate-900,
+  .bg-slate-900\/90,
+  .bg-slate-900\/80,
+  .bg-slate-900\/60,
+  .bg-slate-900\/40,
+  .bg-ink,
+  .bg-ink2,
+  .bg-ink3 {
+    background-color: #ffffff !important;
+    color: #0f172a !important;
+    border-color: #e2e8f0 !important;
+    box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.05), 0 2px 4px -2px rgba(0, 0, 0, 0.05) !important;
+  }
+
+  .bg-slate-950,
+  .bg-slate-950\/90,
+  .bg-slate-950\/80,
+  .bg-slate-950\/60 {
+    background-color: #f1f5f9 !important;
+    color: #0f172a !important;
+    border-color: #e2e8f0 !important;
+  }
+
+  /* Borders in Light Mode */
+  .border-slate-800,
+  .border-slate-800\/80,
+  .border-slate-800\/60,
+  .border-slate-700,
+  .border-mist\/20,
+  .border-mist\/10,
+  .border-ink\/10 {
+    border-color: #cbd5e1 !important;
+  }
+
+  /* Colored Highlights */
+  .text-saffron {
+    color: #b45309 !important;
+  }
+
+  .text-cyan-400, .text-cyan-300 {
+    color: #0284c7 !important;
+  }
+
+  .text-emerald-400, .text-emerald-300 {
+    color: #059669 !important;
+  }
+
+  .text-red-400, .text-red-300 {
+    color: #dc2626 !important;
+  }
+
+  .text-amber-400, .text-amber-300 {
+    color: #d97706 !important;
+  }
+
+  /* Buttons */
+  button.bg-saffron,
+  button.bg-saffron-light,
+  button.bg-emerald-500,
+  a.bg-saffron,
+  .bg-saffron text,
+  .bg-emerald-500 text {
+    color: #0b1320 !important;
+  }
+
+  .bg-amber-50 {
+    background-color: #fffbeb !important;
+  }
+}
+
+/* ── Utilities ──────────────────────────────────────────────────── */
+@layer utilities {
+  .paper-texture {
+    background-image:
+      url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='300' height='300'%3E%3Cfilter id='noise'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.65' numOctaves='3' stitchTiles='stitch'/%3E%3CfeColorMatrix type='saturate' values='0'/%3E%3C/filter%3E%3Crect width='300' height='300' filter='url(%23noise)' opacity='0.02'/%3E%3C/svg%3E");
+  }
+
+  .saffron-underline {
+    text-decoration-line: underline;
+    text-decoration-color: #E8930A;
+    text-decoration-thickness: 2px;
+    text-underline-offset: 4px;
+  }
+
+  .divider-saffron {
+    border-top: 2px solid #E8930A;
+    opacity: 0.4;
+  }
+}
+
+/* ── Scrollbar ──────────────────────────────────────────────────── */
+::-webkit-scrollbar { width: 6px; }
+::-webkit-scrollbar-track { background: transparent; }
+::-webkit-scrollbar-thumb {
+  background: rgba(148, 163, 184, 0.4);
+  border-radius: 4px;
+}
+::-webkit-scrollbar-thumb:hover {
+  background: rgba(148, 163, 184, 0.7);
+}
