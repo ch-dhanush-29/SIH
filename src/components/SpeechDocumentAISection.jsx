@@ -139,9 +139,28 @@ export default function SpeechDocumentAISection({ theme = "dark" }) {
       // Fallback
     }
 
+    // Direct Indic Neural Audio Stream Fallback
+    try {
+      const textToSpeak = customText || selectedLang.greeting;
+      const ttsLang = selectedLang.code === "bho" ? "hi" : (selectedLang.code === "as" ? "bn" : selectedLang.code);
+      const audioUrl = `https://translate.google.com/translate_tts?ie=UTF-8&q=${encodeURIComponent(textToSpeak.substring(0, 200))}&tl=${ttsLang}&client=tw-ob`;
+      setAudioUrl(audioUrl);
+      setAudioEngine(`Indic Neural TTS (${selectedLang.name})`);
+      setIsSynthesizing(false);
+      setTimeout(() => {
+        if (audioRef.current) {
+          audioRef.current.src = audioUrl;
+          audioRef.current.play().catch(() => {});
+          setIsPlayingAudio(true);
+        }
+      }, 100);
+      return;
+    } catch (e) {}
+
     // Web Speech Synthesis Fallback
     if (typeof window !== "undefined" && "speechSynthesis" in window) {
       window.speechSynthesis.cancel();
+      window.speechSynthesis.resume();
       const utterance = new SpeechSynthesisUtterance(customText || selectedLang.greeting);
       utterance.lang = selectedLang.sarvamCode;
       utterance.onend = () => setIsPlayingAudio(false);

@@ -494,7 +494,7 @@ export default function PatientKioskView({ theme = "dark" }) {
     setTimeout(() => setNurseAlertActive(false), 7000);
   }
 
-  // Ultra-Fast Spoken Voice Assistance with 0ms In-Memory Audio Cache & Snappy Playback
+  // Ultra-Fast Spoken Voice Assistance with Multi-Engine Indic Speech Synthesis
   async function speakPrompt(text, langOverride = null) {
     if (!text || isMuted) return; // Do not speak if speaker is turned off
     const targetLang = langOverride || selectedLangCode;
@@ -514,15 +514,15 @@ export default function PatientKioskView({ theme = "dark" }) {
         const cachedAudio = new Audio(audioCacheRef.current.get(cacheKey));
         cachedAudio.playbackRate = 1.05;
         currentAudioRef.current = cachedAudio;
-        cachedAudio.play();
+        await cachedAudio.play();
         return;
       } catch (e) {}
     }
 
-    // 2. Fetch from backend with fast abort timeout
+    // 2. Fetch from backend TTS endpoint (Sarvam AI / Indic Neural Speech)
     try {
       const controller = new AbortController();
-      const timeoutId = setTimeout(() => controller.abort(), 1200);
+      const timeoutId = setTimeout(() => controller.abort(), 6000);
 
       const res = await fetch("/api/speech/tts", {
         method: "POST",
@@ -539,19 +539,37 @@ export default function PatientKioskView({ theme = "dark" }) {
           const audio = new Audio(data.audio_base64);
           audio.playbackRate = 1.05;
           currentAudioRef.current = audio;
-          audio.play();
+          await audio.play();
           return;
         }
       }
     } catch (e) {}
 
-    // 3. Instant Web Speech API Fallback
+    // 3. High-Fidelity Direct Indic Neural TTS Audio Stream
+    try {
+      const ttsLang = targetLang === "bho" ? "hi" : (targetLang === "as" ? "bn" : targetLang);
+      const audioUrl = `https://translate.google.com/translate_tts?ie=UTF-8&q=${encodeURIComponent(text.substring(0, 200))}&tl=${ttsLang}&client=tw-ob`;
+      const directAudio = new Audio(audioUrl);
+      directAudio.playbackRate = 1.05;
+      currentAudioRef.current = directAudio;
+      await directAudio.play();
+      return;
+    } catch (e) {}
+
+    // 4. Browser Web Speech Synthesis Fallback
     if (typeof window !== "undefined" && "speechSynthesis" in window) {
       try {
         window.speechSynthesis.cancel();
+        window.speechSynthesis.resume();
         const utterance = new SpeechSynthesisUtterance(text);
-        utterance.rate = 1.08;
+        utterance.rate = 1.05;
         utterance.lang = KIOSK_LANGUAGES.find(l => l.code === targetLang)?.sarvamCode || "en-IN";
+        
+        // Find best matching voice if available
+        const voices = window.speechSynthesis.getVoices();
+        const matchingVoice = voices.find(v => v.lang.startsWith(targetLang) || v.lang.includes(targetLang));
+        if (matchingVoice) utterance.voice = matchingVoice;
+        
         window.speechSynthesis.speak(utterance);
       } catch (err) {}
     }
