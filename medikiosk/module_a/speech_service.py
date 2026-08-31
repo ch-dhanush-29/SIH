@@ -15,6 +15,23 @@ import urllib.request
 import urllib.error
 from typing import Dict, Any, List, Optional, Tuple
 
+def _load_env_file():
+    env_path = os.path.join(os.path.dirname(os.path.dirname(os.path.dirname(__file__))), ".env")
+    if os.path.exists(env_path):
+        try:
+            with open(env_path, "r", encoding="utf-8") as f:
+                for line in f:
+                    line = line.strip()
+                    if line and not line.startswith("#") and "=" in line:
+                        k, v = line.split("=", 1)
+                        k, v = k.strip(), v.strip().strip('"').strip("'")
+                        if k not in os.environ:
+                            os.environ[k] = v
+        except Exception:
+            pass
+
+_load_env_file()
+
 # Supported Indic Languages in MediKiosk with Sarvam AI language codes & speakers
 INDIC_LANGUAGES = {
     "hi": {"name": "Hindi", "script": "Devanagari", "bhashini_code": "hi", "sarvam_code": "hi-IN", "speaker": "priya", "tts_voice": "hi_female_vits"},
@@ -57,7 +74,7 @@ class IndicSpeechRecognizer:
 
     def __init__(self, default_language: str = "hi"):
         self.default_language = default_language if default_language in INDIC_LANGUAGES else "hi"
-        self.sarvam_key = os.environ.get("SARVAM_API_KEY", "sk_ixu7mg1t_fe6gd7BiMHvGmexZkbQO6XYb")
+        self.sarvam_key = os.environ.get("SARVAM_API_KEY", "sk_283tmsps_2QvNKlrDkoyJbmfzMpNmThnG")
         self.openai_key = os.environ.get("OPENAI_API_KEY", "")
 
     def process_audio(self, audio_bytes: bytes, language: Optional[str] = None) -> Dict[str, Any]:
@@ -119,7 +136,7 @@ class IndicTTSSynthesizer:
     """
 
     def __init__(self):
-        self.sarvam_key = os.environ.get("SARVAM_API_KEY", "sk_ixu7mg1t_fe6gd7BiMHvGmexZkbQO6XYb")
+        self.sarvam_key = os.environ.get("SARVAM_API_KEY", "sk_283tmsps_2QvNKlrDkoyJbmfzMpNmThnG")
 
     def synthesize(self, text: str, language: str = "hi") -> Dict[str, Any]:
         """
