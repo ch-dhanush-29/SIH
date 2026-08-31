@@ -1,4 +1,11 @@
 import React, { useState, useEffect, useRef } from "react";
+import {
+  COMPLAINT_QUESTIONS_I18N,
+  CONDITION_LABELS,
+  getQuestionText,
+  getOptionLabels,
+  getConditionLabel
+} from "../../content/kioskQuestionsI18n.js";
 import { motion, AnimatePresence } from "framer-motion";
 import {
   User, Mic, MicOff, Volume2, VolumeX, ShieldCheck, FileText, CheckCircle2,
@@ -417,57 +424,6 @@ const SEED_PATIENTS = [
   { id: "SIM-91-1001-0000-0001", name: "Ananya Sharma", age: 28, gender: "Female", phone: "9988776655", complaint: "cough", isReturning: false, history: "New Registration" },
 ];
 
-const COMPLAINT_QUESTIONS = {
-  "chest pain": [
-    { field: "site", q: "Where is the pain located in your chest?", qHi: "छाती में दर्द कहाँ महसूस हो रहा है?", qBn: "বুকে ব্যথা কোথায় অনুভূত হচ্ছে?", options: ["Middle of Chest (Substernal)", "Left Arm & Shoulder", "Right Side of Chest"] },
-    { field: "onset", q: "When did this chest discomfort start?", qHi: "यह दर्द कब शुरू हुआ?", qBn: "এই ব্যথা কখন শুরু হয়েছিল?", options: ["Sudden (Within 1 hour)", "Past 2-3 Days", "During heavy physical exertion"] },
-    { field: "character", q: "How does the pain feel?", qHi: "दर्द का प्रकार कैसा है?", qBn: "ব্যথা কেমন অনুভূত হয়?", options: ["Heavy Crushing & Pressure", "Sharp Stabbing", "Burning Acidic Discomfort"] },
-    { field: "radiation", q: "Does the pain spread to jaw, neck, or left arm?", qHi: "क्या दर्द जबड़े, गर्दन या बाएं हाथ में जा रहा है?", qBn: "ব্যথা কি চোয়াল বা বাঁ হাতে ছড়িয়ে পড়ছে?", options: ["Spreading to Left Arm & Jaw", "Spreading to Upper Back", "No Spreading"] },
-    { field: "associations", q: "Are you sweating or feeling short of breath?", qHi: "क्या पसीना आ रहा है या सांस फूल रही है?", qBn: "ঘাম হচ্ছে বা শ্বাস নিতে কষ্ট হচ্ছে?", options: ["Cold Sweating & Breathlessness", "Nausea & Dizziness", "None"] },
-    { field: "severity", q: "How severe is the chest discomfort right now?", qHi: "दर्द कितना तेज है?", qBn: "ব্যথা কতটা তীব্র?", options: ["Severe (Hard to bear)", "Moderate (Bearable)", "Mild Discomfort"] },
-  ],
-  "fever": [
-    { field: "onset", q: "How many days have you had this fever?", qHi: "बुखार कितने दिनों से है?", qBn: "জ্বর কত দিন ধরে হচ্ছে?", options: ["1-2 Days with chills", "Past 5-7 Days continuous", "Intermittent (Comes & goes)"] },
-    { field: "character", q: "Do you have shivering, chills, or body aches?", qHi: "क्या कंपकंपी या बदन दर्द है?", qBn: "কাঁপুনি বা শরীরে তীব্র ব্যথা আছে?", options: ["High fever with intense shivering", "Continuous moderate warmth", "Fever rises high in evening/night"] },
-    { field: "associations", q: "Do you also have skin rash, vomiting, or sore throat?", qHi: "क्या दाने, उल्टी या गले में खराश है?", qBn: "গায়ে লাল দাগ, বমি বা গলা ব্যথা আছে?", options: ["Severe headache & eye pain", "Sore throat & running nose", "Vomiting & loose motions", "None"] },
-    { field: "severity", q: "What was your highest recorded body temperature?", qHi: "अधिकतम बुखार कितना था?", qBn: "সর্বোচ্চ তাপমাত্রা কত রেকর্ড হয়েছে?", options: ["103 °F or higher (High Fever)", "101 °F - 102 °F (Moderate)", "99.5 °F - 100.5 °F (Mild)"] },
-  ],
-  "cough": [
-    { field: "onset", q: "How long have you had this cough?", qHi: "खांसी कितने दिनों से है?", qBn: "কাশি কত দিন ধরে হচ্ছে?", options: ["Past 3-5 days", "More than 2-3 weeks", "Started suddenly today"] },
-    { field: "character", q: "Is it a dry hacking cough or with phlegm?", qHi: "क्या यह सूखी खांसी है या बलगम वाली?", qBn: "শুকনো কাশি নাকি কফ বের হচ্ছে?", options: ["Dry Hacking Cough (No phlegm)", "Thick Yellow/Green Phlegm", "Blood-streaked sputum"] },
-    { field: "associations", q: "Any wheezing, night breathlessness, or chest tightness?", qHi: "क्या सांस में सीटी की आवाज या सीने में जकड़न है?", qBn: "শ্বাসকষ্ট, বুকে বাঁশির মতো শব্দ বা রাতে কাশি হয়?", options: ["Wheezing & night breathlessness", "Throat irritation & fever", "Chest tightness on cold air exposure", "None"] },
-    { field: "severity", q: "How is it affecting your sleep and daily activity?", qHi: "क्या इससे आपकी नींद में बाधा आ रही है?", qBn: "ঘুমের ব্যাঘাত ঘটছে বা কাশতে কষ্ট হচ্ছে?", options: ["Severe (Cannot sleep at night)", "Moderate (Frequent coughing fits)", "Mild cough"] }
-  ],
-  "abdominal pain": [
-    { field: "site", q: "Which part of your stomach is hurting?", qHi: "पेट के किस हिस्से में दर्द है?", qBn: "পেটের কোন অংশে ব্যথা হচ্ছে?", options: ["Upper Middle (Epigastric / Acidity)", "Right Lower Abdomen", "Lower Pelvic Area", "Entire Stomach Cramping"] },
-    { field: "onset", q: "When does the stomach pain usually occur?", qHi: "दर्द कब शुरू या तेज होता है?", qBn: "ব্যথা কখন शुरू বা তীব্র হয়?", options: ["Empty stomach / Early morning", "Immediately after eating food", "Continuous cramp since hours"] },
-    { field: "character", q: "How does the abdominal pain feel?", qHi: "दर्द का एहसास कैसा है?", qBn: "ব্যথা কেমন অনুভূত হয়?", options: ["Burning Acidic Sensation", "Sharp Colicky Spasms", "Dull Constant Ache"] },
-    { field: "associations", q: "Any vomiting, loose motions, or black stools?", qHi: "क्या उल्टी, दस्त या काला मल आ रहा है?", qBn: "বমি, পাতলা পায়খানা বা মল কালো হচ্ছে?", options: ["Repeated vomiting & nausea", "Watery diarrhea", "Bloating & gas", "None"] },
-    { field: "severity", q: "How intense is the stomach pain right now?", qHi: "पेट का दर्द कितना गंभीर है?", qBn: "পেটের ব্যথা কতটা তীব্র?", options: ["Severe (Doubled over with pain)", "Moderate Cramps", "Mild Discomfort"] }
-  ],
-  "headache": [
-    { field: "site", q: "Where is the headache centered?", qHi: "सिरदर्द कहाँ पर हो रहा है?", qBn: "মাথাব্যথা কোন অংশে বেশি হচ্ছে?", options: ["One side of head (Unilateral)", "Forehead & behind eyes", "Back of head & neck stiffness", "Entire head throbbing"] },
-    { field: "onset", q: "How did the headache develop?", qHi: "सिरदर्द कैसे शुरू हुआ?", qBn: "মাথাব্যথা কিভাবে शुरू হলো?", options: ["Sudden Thunderclap (Severe in seconds)", "Gradual throbbing over hours", "Chronic daily tension"] },
-    { field: "character", q: "How does the headache feel?", qHi: "सिरदर्द किस तरह का लग रहा है?", qBn: "মাথা কেমন করছে?", options: ["Pulsating / Throbbing with heartbeat", "Heavy tight band around head", "Sharp stabbing behind eye"] },
-    { field: "associations", q: "Do you have nausea, light sensitivity, or blurred vision?", qHi: "क्या उल्टी, रोशनी से चिढ़ या धुंधलापन है?", qBn: "বমি বমি ভাব, আলোয় অস্বস্তি বা চোখে ঝাপসা দেখছেন?", options: ["Sensitivity to light & sound (Photophobia)", "Nausea & vomiting", "Visual zigzag lines (Aura)", "None"] }
-  ],
-  "diabetes_htn": [
-    { field: "onset", q: "How regularly have you been taking your daily prescribed medicines?", qHi: "क्या आप नियमित रूप से दवाएं ले रहे हैं?", qBn: "আপনি কি নিয়মিত প্রেসক্রিপশনের ওষুধ খাচ্ছেন?", options: ["Strictly every day on time", "Missed a few doses recently", "Stopped medicines due to side effects"] },
-    { field: "associations", q: "Have you experienced dizziness, tremors, or cold sweating (Low Sugar)?", qHi: "क्या चक्कर, कंपकंपी या अत्यधिक पसीना आया है?", qBn: "মাথা ঘোরা, হাত কাঁপা বা হঠাৎ অতিরিক্ত ঘাম হয়েছে?", options: ["Episodes of sudden shakiness & sweating", "Frequent urination & excessive thirst", "Blurred vision or foot numbness", "None"] },
-    { field: "character", q: "When was your last fasting blood glucose or BP checked?", qHi: "पिछली बार शुगर या बीपी कब चेक किया था?", qBn: "সর্বশেষ সুগার বা প্রেশার কখন পরীক্ষা করেছিলেন?", options: ["Within this week (High readings)", "More than 1 month ago", "Not checked recently"] }
-  ],
-  "joint_pain": [
-    { field: "site", q: "Which joints or bones are currently affected?", qHi: "कौन से जोड़ों में दर्द है?", qBn: "কোন জয়েন্ট বা হাড়ে ব্যথা হচ্ছে?", options: ["Both Knees (Difficulty walking)", "Lower Back & Sciatic leg pain", "Small finger joints & wrists", "Shoulder & neck stiffness"] },
-    { field: "onset", q: "Do you experience morning stiffness when waking up?", qHi: "क्या सुबह उठने पर जोड़ों में अकड़न रहती है?", qBn: "সকালে ঘুম থেকে ওঠার পর গাঁটে শক্ত ভাব থাকে?", options: ["Morning stiffness lasting > 30 mins", "Stiffness gets worse after walking/stairs", "Constant dull joint ache"] },
-    { field: "associations", q: "Is there visible swelling, warmth, or redness around the joint?", qHi: "क्या जोड़ पर सूजन या लाली है?", qBn: "জয়েন্টে কি ফোলা বা লালচে ভাব আছে?", options: ["Marked swelling & heat", "Creaking / cracking sound on movement", "None"] }
-  ],
-  "breathlessness": [
-    { field: "onset", q: "When does your shortness of breath occur?", qHi: "सांस कब फूलती है?", qBn: "শ্বাসকষ্ট কখন বেশি হয়?", options: ["Even while resting / sitting", "After walking a few steps or climbing stairs", "Waking up breathless while lying flat"] },
-    { field: "associations", q: "Do you have swelling in your feet / ankles or chest pain?", qHi: "क्या पैरों में सूजन या सीने में दर्द है?", qBn: "পায়ে বা গোড়ালিতে ফোলাভাব অথবা বুকে ব্যথা আছে?", options: ["Swollen ankles & legs (Edema)", "Chest heaviness & wheezing", "Coughing up pink/white frothy sputum", "None"] },
-    { field: "severity", q: "How difficult is it to breathe comfortably right now?", qHi: "अभी सांस लेने में कितनी कठिनाई है?", qBn: "এখন স্বাভাবিক শ্বাস নিতে কতটা কষ্ট হচ্ছে?", options: ["Severe (Struggling to speak full sentence)", "Moderate breathlessness", "Mild breathlessness on exertion"] }
-  ]
-};
-
 export default function PatientKioskView({ theme = "dark" }) {
   const isLight = theme === "light";
   
@@ -497,7 +453,7 @@ export default function PatientKioskView({ theme = "dark" }) {
   const audioCacheRef = useRef(new Map());
 
   const t = I18N[selectedLangCode] || I18N.en;
-  const currentQuestions = COMPLAINT_QUESTIONS[selectedComplaint] || COMPLAINT_QUESTIONS["chest pain"];
+  const currentQuestions = COMPLAINT_QUESTIONS_I18N[selectedComplaint] || COMPLAINT_QUESTIONS_I18N["chest pain"];
 
   async function handleSaveVisionKey(key, prov = "auto") {
     setVisionApiKey(key);
@@ -675,19 +631,19 @@ export default function PatientKioskView({ theme = "dark" }) {
     }
   }
 
-  function handleAnswer(opt) {
+  function handleAnswer(opt, englishOpt = null) {
     const q = currentQuestions[qIndex];
-    const newAnswers = { ...answers, [q.field]: opt };
+    const newAnswers = { ...answers, [q.field]: englishOpt || opt };
     setAnswers(newAnswers);
 
     if (qIndex < currentQuestions.length - 1) {
       setQIndex(i => i + 1);
       const nextQ = currentQuestions[qIndex + 1];
-      const qText = selectedLangCode === "bn" ? nextQ.qBn : selectedLangCode === "hi" ? nextQ.qHi : nextQ.q;
-      speakPrompt(qText);
+      const qText = getQuestionText(nextQ, selectedLangCode);
+      speakPrompt(qText, selectedLangCode);
     } else {
       setStep(6); // Go to Triage & Vitals
-      speakPrompt(t.triageTitle);
+      speakPrompt(t.triageTitle, selectedLangCode);
     }
   }
 
@@ -1388,36 +1344,39 @@ export default function PatientKioskView({ theme = "dark" }) {
                   {/* 8 Condition Badges Selector */}
                   <div className="flex flex-wrap gap-2 pt-1">
                     {[
-                      { id: "chest pain", icon: "🫀", label: "Chest Pain" },
-                      { id: "fever", icon: "🌡️", label: "High Fever" },
-                      { id: "cough", icon: "🫁", label: "Cough & Cold" },
-                      { id: "abdominal pain", icon: "🤢", label: "Stomach Pain" },
-                      { id: "headache", icon: "🧠", label: "Severe Headache" },
-                      { id: "diabetes_htn", icon: "🩸", label: "Diabetes & BP" },
-                      { id: "joint_pain", icon: "🦴", label: "Joint & Bone Pain" },
-                      { id: "breathlessness", icon: "💨", label: "Breathlessness" }
-                    ].map(comp => (
-                      <button
-                        key={comp.id}
-                        type="button"
-                        onClick={() => {
-                          setSelectedComplaint(comp.id);
-                          setQIndex(0);
-                          setAnswers({});
-                          speakPrompt(comp.label);
-                        }}
-                        className={`px-3.5 py-1.5 rounded-xl text-xs font-bold transition-all flex items-center gap-1.5 border ${
-                          selectedComplaint === comp.id
-                            ? "bg-blue-600 text-white border-blue-600 shadow-md scale-105"
-                            : isLight
-                              ? "bg-white text-slate-700 border-slate-200 hover:border-blue-400 hover:bg-blue-50/50"
-                              : "bg-slate-800 text-slate-300 border-slate-700 hover:border-blue-500 hover:bg-slate-700"
-                        }`}
-                      >
-                        <span>{comp.icon}</span>
-                        <span>{comp.label}</span>
-                      </button>
-                    ))}
+                      { id: "chest pain", icon: "🫀" },
+                      { id: "fever", icon: "🌡️" },
+                      { id: "cough", icon: "🫁" },
+                      { id: "abdominal pain", icon: "🤢" },
+                      { id: "headache", icon: "🧠" },
+                      { id: "diabetes_htn", icon: "🩸" },
+                      { id: "joint_pain", icon: "🦴" },
+                      { id: "breathlessness", icon: "💨" }
+                    ].map(comp => {
+                      const localizedLabel = getConditionLabel(comp.id, selectedLangCode);
+                      return (
+                        <button
+                          key={comp.id}
+                          type="button"
+                          onClick={() => {
+                            setSelectedComplaint(comp.id);
+                            setQIndex(0);
+                            setAnswers({});
+                            speakPrompt(localizedLabel, selectedLangCode);
+                          }}
+                          className={`px-3.5 py-1.5 rounded-xl text-xs font-bold transition-all flex items-center gap-1.5 border cursor-pointer ${
+                            selectedComplaint === comp.id
+                              ? "bg-blue-600 text-white border-blue-600 shadow-md scale-105"
+                              : isLight
+                                ? "bg-white text-slate-700 border-slate-200 hover:border-blue-400 hover:bg-blue-50/50"
+                                : "bg-slate-800 text-slate-300 border-slate-700 hover:border-blue-500 hover:bg-slate-700"
+                          }`}
+                        >
+                          <span>{comp.icon}</span>
+                          <span>{localizedLabel}</span>
+                        </button>
+                      );
+                    })}
                   </div>
                 </div>
 
@@ -1430,15 +1389,17 @@ export default function PatientKioskView({ theme = "dark" }) {
                       <span className="text-xs font-mono text-blue-600 dark:text-blue-400 font-bold uppercase">
                         Question {qIndex + 1} of {currentQuestions.length}
                       </span>
-                      <h3 className="text-xl font-bold mt-1">
-                        {selectedLangCode === "bn" ? currentQuestions[qIndex].qBn : selectedLangCode === "hi" ? currentQuestions[qIndex].qHi : currentQuestions[qIndex].q}
+                      <h3 className="text-xl font-bold mt-1 text-slate-900 dark:text-white">
+                        {getQuestionText(currentQuestions[qIndex], selectedLangCode)}
                       </h3>
-                      <p className="text-xs text-slate-500 mt-0.5">{currentQuestions[qIndex].q}</p>
+                      {selectedLangCode !== "en" && (
+                        <p className="text-xs text-slate-500 mt-0.5">{currentQuestions[qIndex].q}</p>
+                      )}
                     </div>
 
                     <button
-                      onClick={() => speakPrompt(selectedLangCode === "bn" ? currentQuestions[qIndex].qBn : selectedLangCode === "hi" ? currentQuestions[qIndex].qHi : currentQuestions[qIndex].q)}
-                      className={`p-3 rounded-xl border text-xs font-bold flex items-center gap-1.5 ${isLight ? "bg-white border-slate-300" : "bg-slate-900 border-slate-700"}`}
+                      onClick={() => speakPrompt(getQuestionText(currentQuestions[qIndex], selectedLangCode), selectedLangCode)}
+                      className={`p-3 rounded-xl border text-xs font-bold flex items-center gap-1.5 cursor-pointer ${isLight ? "bg-white border-slate-300 hover:bg-slate-100" : "bg-slate-900 border-slate-700 hover:bg-slate-800"}`}
                     >
                       <Volume2 className="w-4 h-4 text-blue-500" />
                       <span>{t.listenBtn}</span>
@@ -1447,19 +1408,22 @@ export default function PatientKioskView({ theme = "dark" }) {
 
                   {/* Tap Options */}
                   <div className="grid sm:grid-cols-3 gap-3 pt-2">
-                    {currentQuestions[qIndex].options.map((opt) => (
-                      <button
-                        key={opt}
-                        onClick={() => handleAnswer(opt)}
-                        className={`p-4 rounded-xl border text-left font-bold text-xs transition-all hover:scale-[1.02] ${
-                          isLight
-                            ? "bg-white border-slate-200 hover:border-blue-600 text-slate-800 shadow-sm"
-                            : "bg-slate-900 border-slate-800 hover:border-blue-500 text-white"
-                        }`}
-                      >
-                        {opt}
-                      </button>
-                    ))}
+                    {getOptionLabels(currentQuestions[qIndex], selectedLangCode).map((opt, idx) => {
+                      const englishOpt = currentQuestions[qIndex].options?.[idx] || opt;
+                      return (
+                        <button
+                          key={opt + idx}
+                          onClick={() => handleAnswer(opt, englishOpt)}
+                          className={`p-4 rounded-xl border text-left font-bold text-xs transition-all hover:scale-[1.02] cursor-pointer ${
+                            isLight
+                              ? "bg-white border-slate-200 hover:border-blue-600 text-slate-800 shadow-sm"
+                              : "bg-slate-900 border-slate-800 hover:border-blue-500 text-white"
+                          }`}
+                        >
+                          {opt}
+                        </button>
+                      );
+                    })}
                   </div>
 
                   {/* Voice Button */}
