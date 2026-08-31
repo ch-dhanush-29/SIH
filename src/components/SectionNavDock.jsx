@@ -36,27 +36,28 @@ export default function SectionNavDock() {
   }, [])
 
   useEffect(() => {
-    const elements = SECTIONS.map(s => document.getElementById(s.id)).filter(Boolean)
+    const handleScrollSpy = () => {
+      const scrollPos = window.scrollY + 160;
+      let currentSection = SECTIONS[0].id;
 
-    const observer = new IntersectionObserver(
-      (entries) => {
-        entries.forEach((entry) => {
-          if (entry.isIntersecting) {
-            setActiveSection(entry.target.id)
+      for (const sec of SECTIONS) {
+        const el = document.getElementById(sec.id);
+        if (el) {
+          const top = el.offsetTop;
+          if (scrollPos >= top) {
+            currentSection = sec.id;
           }
-        })
-      },
-      {
-        rootMargin: '-30% 0px -40% 0px',
-        threshold: 0.1,
+        }
       }
-    )
+      setActiveSection(currentSection);
+    };
 
-    elements.forEach(el => observer.observe(el))
-    return () => observer.disconnect()
-  }, [])
+    window.addEventListener('scroll', handleScrollSpy, { passive: true });
+    handleScrollSpy();
+    return () => window.removeEventListener('scroll', handleScrollSpy);
+  }, []);
 
-  if (!visible) return null
+  if (!visible) return null;
 
   return (
     <motion.aside
@@ -67,36 +68,44 @@ export default function SectionNavDock() {
       className="fixed right-4 top-1/2 -translate-y-1/2 z-40 hidden xl:flex flex-col items-end gap-3 pointer-events-auto"
       aria-label="Section quick navigator"
     >
-      <div className="bg-ink/90 backdrop-blur-md border border-mist/20 rounded-2xl p-2 shadow-2xl flex flex-col gap-2">
+      <div className="bg-slate-900/95 backdrop-blur-md border border-slate-700/80 rounded-2xl p-2 shadow-2xl flex flex-col gap-2">
         {SECTIONS.map((sec) => {
-          const isActive = activeSection === sec.id
-          const Icon = sec.icon
+          const isActive = activeSection === sec.id;
+          const Icon = sec.icon;
 
           return (
             <a
               key={sec.id}
               href={`#${sec.id}`}
+              onClick={(e) => {
+                e.preventDefault();
+                setActiveSection(sec.id);
+                const el = document.getElementById(sec.id);
+                if (el) {
+                  el.scrollIntoView({ behavior: 'smooth', block: 'start' });
+                }
+              }}
               title={sec.label}
               className={[
-                'group relative flex items-center justify-end p-2.5 rounded-xl transition-all duration-200',
+                'group relative flex items-center justify-end p-2.5 rounded-xl transition-all duration-200 cursor-pointer',
                 isActive
-                  ? 'bg-saffron text-ink font-bold shadow-lg scale-105'
-                  : 'text-mist/50 hover:text-paper hover:bg-mist/10'
+                  ? 'bg-saffron text-slate-950 font-bold shadow-lg scale-105'
+                  : 'text-slate-400 hover:text-white hover:bg-slate-800'
               ].join(' ')}
             >
               {/* Tooltip on hover */}
               <span className={[
                 'absolute right-12 px-3 py-1 rounded-md text-xs font-mono whitespace-nowrap pointer-events-none transition-all shadow-md',
                 isActive
-                  ? 'bg-saffron text-ink font-bold opacity-100 translate-x-0'
-                  : 'bg-ink border border-mist/20 text-paper opacity-0 translate-x-2 group-hover:opacity-100 group-hover:translate-x-0'
+                  ? 'bg-saffron text-slate-950 font-bold opacity-100 translate-x-0'
+                  : 'bg-slate-900 border border-slate-700 text-white opacity-0 translate-x-2 group-hover:opacity-100 group-hover:translate-x-0'
               ].join(' ')}>
                 {sec.label}
               </span>
 
               <Icon className="w-4 h-4" />
             </a>
-          )
+          );
         })}
 
         {/* Scroll to Top */}

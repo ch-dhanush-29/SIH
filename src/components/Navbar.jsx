@@ -67,26 +67,31 @@ export default function Navbar({ activeView = 'overview', onViewChange, theme = 
     return () => window.removeEventListener('scroll', onScroll);
   }, []);
 
-  // ScrollSpy for in-page sections when in overview mode
+  // Fast, accurate ScrollSpy for in-page sections when in overview mode
   useEffect(() => {
     if (activeView !== 'overview') return;
 
     const sectionIds = ['problem', 'modules', 'journey', 'speech-ai', 'his-integration', 'hardware-services', 'security-compliance', 'trust', 'cta'];
-    const elements = sectionIds.map(id => document.getElementById(id)).filter(Boolean);
 
-    const observer = new IntersectionObserver(
-      (entries) => {
-        entries.forEach((entry) => {
-          if (entry.isIntersecting) {
-            setActiveSection(entry.target.id);
+    const handleScrollSpy = () => {
+      const scrollPos = window.scrollY + 160;
+      let currentSection = sectionIds[0];
+
+      for (const id of sectionIds) {
+        const el = document.getElementById(id);
+        if (el) {
+          const top = el.offsetTop;
+          if (scrollPos >= top) {
+            currentSection = id;
           }
-        });
-      },
-      { rootMargin: '-20% 0px -60% 0px', threshold: 0.1 }
-    );
+        }
+      }
+      setActiveSection(currentSection);
+    };
 
-    elements.forEach(el => observer.observe(el));
-    return () => observer.disconnect();
+    window.addEventListener('scroll', handleScrollSpy, { passive: true });
+    handleScrollSpy();
+    return () => window.removeEventListener('scroll', handleScrollSpy);
   }, [activeView]);
 
   function handleOpenNewTab(e, viewId) {
@@ -106,6 +111,7 @@ export default function Navbar({ activeView = 'overview', onViewChange, theme = 
   function handleNavClick(e, href) {
     e.preventDefault();
     const targetId = href.replace('#', '');
+    setActiveSection(targetId);
     if (activeView !== 'overview') {
       handleSwitchView('overview');
       setTimeout(() => {
