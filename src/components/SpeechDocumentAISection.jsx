@@ -213,13 +213,13 @@ export default function SpeechDocumentAISection({ theme = "dark" }) {
         </div>
 
         {/* Tab Controls */}
-        <div className="flex justify-center gap-3">
+        <div className="flex flex-wrap justify-center gap-3">
           <button
             onClick={() => setActiveTab("voice")}
-            className={`px-6 py-3 rounded-2xl font-bold text-xs font-mono flex items-center gap-2 border transition-all ${
+            className={`px-6 py-3 rounded-2xl font-bold text-xs font-mono flex items-center gap-2 border transition-all cursor-pointer ${
               activeTab === "voice"
                 ? "bg-saffron text-slate-950 border-saffron shadow-lg shadow-saffron/20 scale-105"
-                : isLight ? "bg-white border-slate-200 text-slate-700" : "bg-slate-900 border-slate-800 text-slate-400"
+                : isLight ? "bg-white border-slate-200 text-slate-700 hover:bg-slate-50" : "bg-slate-900 border-slate-800 text-slate-400 hover:bg-slate-800"
             }`}
           >
             <Mic className="w-4 h-4" />
@@ -228,14 +228,26 @@ export default function SpeechDocumentAISection({ theme = "dark" }) {
 
           <button
             onClick={() => setActiveTab("ocr")}
-            className={`px-6 py-3 rounded-2xl font-bold text-xs font-mono flex items-center gap-2 border transition-all ${
+            className={`px-6 py-3 rounded-2xl font-bold text-xs font-mono flex items-center gap-2 border transition-all cursor-pointer ${
               activeTab === "ocr"
                 ? "bg-cyan-500 text-slate-950 border-cyan-400 shadow-lg shadow-cyan-500/20 scale-105"
-                : isLight ? "bg-white border-slate-200 text-slate-700" : "bg-slate-900 border-slate-800 text-slate-400"
+                : isLight ? "bg-white border-slate-200 text-slate-700 hover:bg-slate-50" : "bg-slate-900 border-slate-800 text-slate-400 hover:bg-slate-800"
             }`}
           >
             <Camera className="w-4 h-4" />
             <span>2. 4K Prescription OCR & ICMR Labs</span>
+          </button>
+
+          <button
+            onClick={() => setActiveTab("ayush")}
+            className={`px-6 py-3 rounded-2xl font-bold text-xs font-mono flex items-center gap-2 border transition-all cursor-pointer ${
+              activeTab === "ayush"
+                ? "bg-emerald-500 text-slate-950 border-emerald-400 shadow-lg shadow-emerald-500/20 scale-105"
+                : isLight ? "bg-white border-slate-200 text-slate-700 hover:bg-slate-50" : "bg-slate-900 border-slate-800 text-slate-400 hover:bg-slate-800"
+            }`}
+          >
+            <Sparkles className="w-4 h-4 text-emerald-600 dark:text-emerald-400" />
+            <span>3. AYUSH / Ayurveda & NAMASTE Engine</span>
           </button>
         </div>
 
@@ -551,6 +563,142 @@ export default function SpeechDocumentAISection({ theme = "dark" }) {
                     Click "Snap & Process 4K Frame" to trigger live OCR extraction.
                   </div>
                 )}
+              </div>
+            </div>
+          </div>
+        )}
+
+        {/* ─── TAB 3: AYUSH / AYURVEDA & NAMASTE CODES ─── */}
+        {activeTab === "ayush" && (
+          <div className={`rounded-3xl p-6 sm:p-10 border shadow-2xl space-y-8 ${
+            isLight ? "bg-white border-slate-200" : "bg-slate-900 border-slate-800"
+          }`}>
+            <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 border-b pb-4 border-slate-200 dark:border-slate-800">
+              <div>
+                <span className="text-xs font-mono text-emerald-600 dark:text-emerald-400 uppercase font-bold">
+                  AYUSH Standardized Clinical Intelligence
+                </span>
+                <h3 className="text-xl font-bold font-display mt-0.5">
+                  Dashavidha Pariksha, Prakriti-Vikriti Scoring & NAMASTE ↔ ICD-11-TM2
+                </h3>
+              </div>
+              <span className="text-xs font-mono font-bold px-3 py-1 bg-emerald-500/10 text-emerald-600 dark:text-emerald-400 rounded-full border border-emerald-500/20">
+                🌿 Integrated Clinical Path
+              </span>
+            </div>
+
+            <div className="grid md:grid-cols-3 gap-6">
+              {/* Box 1: 10 Dashavidha Parameters */}
+              <div className={`p-5 rounded-2xl border space-y-3 font-mono text-xs ${
+                isLight ? "bg-slate-50 border-slate-200" : "bg-slate-950 border-slate-800"
+              }`}>
+                <div className="font-bold text-emerald-600 dark:text-emerald-400 uppercase border-b pb-2 border-slate-200 dark:border-slate-800 flex items-center justify-between">
+                  <span>10 Dashavidha Pariksha</span>
+                  <span>10/10 Live</span>
+                </div>
+                <div className="space-y-1.5 text-slate-700 dark:text-slate-300">
+                  <div className="flex justify-between"><span>1. Prakriti (Baseline):</span><strong className="text-blue-500">Vata-Pitta</strong></div>
+                  <div className="flex justify-between"><span>2. Vikriti (Imbalance):</span><strong className="text-red-500">Vata Pitta Vriddhi</strong></div>
+                  <div className="flex justify-between"><span>3. Sara (Tissue Essence):</span><span>Madhyama (Medium)</span></div>
+                  <div className="flex justify-between"><span>4. Samhanana (Compactness):</span><span>Madhyama</span></div>
+                  <div className="flex justify-between"><span>5. Pramana (Anthropometry):</span><span>Pravara (Standard)</span></div>
+                  <div className="flex justify-between"><span>6. Satmya (Adaptability):</span><span>Mishra (Mixed)</span></div>
+                  <div className="flex justify-between"><span>7. Sattva (Mental Vitality):</span><span>Pravara (High)</span></div>
+                  <div className="flex justify-between"><span>8. Ahara Shakti (Digestion):</span><span>Madhyama Agni</span></div>
+                  <div className="flex justify-between"><span>9. Vyayama Shakti (Stamina):</span><span>Madhyama (Moderate)</span></div>
+                  <div className="flex justify-between"><span>10. Vaya (Age Period):</span><span>Madhyama (58 Yrs)</span></div>
+                </div>
+              </div>
+
+              {/* Box 2: Dosha Balance Breakdown */}
+              <div className={`p-5 rounded-2xl border space-y-4 font-mono text-xs ${
+                isLight ? "bg-slate-50 border-slate-200" : "bg-slate-950 border-slate-800"
+              }`}>
+                <div className="font-bold text-emerald-600 dark:text-emerald-400 uppercase border-b pb-2 border-slate-200 dark:border-slate-800">
+                  Quantitative Dosha Ratio
+                </div>
+                
+                <div className="space-y-3">
+                  <div>
+                    <div className="flex justify-between mb-1">
+                      <span className="text-blue-500 font-bold">Vata (Air/Ether):</span>
+                      <span className="font-bold">50.0%</span>
+                    </div>
+                    <div className="w-full bg-slate-200 dark:bg-slate-800 h-2.5 rounded-full overflow-hidden">
+                      <div className="bg-blue-500 h-full rounded-full" style={{ width: "50%" }}></div>
+                    </div>
+                  </div>
+
+                  <div>
+                    <div className="flex justify-between mb-1">
+                      <span className="text-amber-500 font-bold">Pitta (Fire/Water):</span>
+                      <span className="font-bold">33.3%</span>
+                    </div>
+                    <div className="w-full bg-slate-200 dark:bg-slate-800 h-2.5 rounded-full overflow-hidden">
+                      <div className="bg-amber-500 h-full rounded-full" style={{ width: "33.3%" }}></div>
+                    </div>
+                  </div>
+
+                  <div>
+                    <div className="flex justify-between mb-1">
+                      <span className="text-emerald-500 font-bold">Kapha (Earth/Water):</span>
+                      <span className="font-bold">16.7%</span>
+                    </div>
+                    <div className="w-full bg-slate-200 dark:bg-slate-800 h-2.5 rounded-full overflow-hidden">
+                      <div className="bg-emerald-500 h-full rounded-full" style={{ width: "16.7%" }}></div>
+                    </div>
+                  </div>
+                </div>
+
+                <div className={`p-2.5 rounded-xl border text-[11px] ${
+                  isLight ? "bg-white border-slate-200 text-slate-700" : "bg-slate-900 border-slate-800 text-slate-300"
+                }`}>
+                  <strong className="text-saffron">Vaidya Note:</strong> High Vata excitation aggravating dry respiratory airway & Joint crepitus.
+                </div>
+              </div>
+
+              {/* Box 3: NAMASTE ↔ ICD-11-TM2 Reference Link */}
+              <div className={`p-5 rounded-2xl border space-y-3 font-mono text-xs ${
+                isLight ? "bg-slate-50 border-slate-200" : "bg-slate-950 border-slate-800"
+              }`}>
+                <div className="font-bold text-emerald-600 dark:text-emerald-400 uppercase border-b pb-2 border-slate-200 dark:border-slate-800">
+                  NAMASTE ↔ ICD-11-TM2 Codes
+                </div>
+
+                <div className="space-y-2">
+                  <div className={`p-2.5 rounded-xl border ${
+                    isLight ? "bg-white border-slate-200" : "bg-slate-900 border-slate-800"
+                  }`}>
+                    <div className="flex justify-between font-bold text-emerald-600 dark:text-emerald-400">
+                      <span>AYU-VV-001</span>
+                      <span>TM2-MSK-01</span>
+                    </div>
+                    <div className="text-slate-800 dark:text-slate-200 font-semibold mt-0.5">Sandhigata Vata (सन्धिगत वात)</div>
+                    <div className="text-[10px] text-slate-500">Allopathic: Osteoarthritis / Degenerative Joint</div>
+                  </div>
+
+                  <div className={`p-2.5 rounded-xl border ${
+                    isLight ? "bg-white border-slate-200" : "bg-slate-900 border-slate-800"
+                  }`}>
+                    <div className="flex justify-between font-bold text-emerald-600 dark:text-emerald-400">
+                      <span>AYU-RS-002</span>
+                      <span>TM2-RESP-02</span>
+                    </div>
+                    <div className="text-slate-800 dark:text-slate-200 font-semibold mt-0.5">Tamaka Shwasa (तमक श्वास)</div>
+                    <div className="text-[10px] text-slate-500">Allopathic: Bronchial Asthma</div>
+                  </div>
+
+                  <div className={`p-2.5 rounded-xl border ${
+                    isLight ? "bg-white border-slate-200" : "bg-slate-900 border-slate-800"
+                  }`}>
+                    <div className="flex justify-between font-bold text-emerald-600 dark:text-emerald-400">
+                      <span>AYU-GI-001</span>
+                      <span>TM2-GIT-01</span>
+                    </div>
+                    <div className="text-slate-800 dark:text-slate-200 font-semibold mt-0.5">Amlapitta (अम्लपित्त)</div>
+                    <div className="text-[10px] text-slate-500">Allopathic: GERD / Hyperacidity</div>
+                  </div>
+                </div>
               </div>
             </div>
           </div>

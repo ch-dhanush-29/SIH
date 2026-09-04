@@ -44,3 +44,58 @@ timestamp,session_id,patient_id,consent_type,action,purpose
 2026-08-30 19:20:49,sess_fail_01,P_FAIL,GRANT_DOCUMENT_SCAN,SUCCESS,Scan docs
 2026-08-30 19:20:49,sess_fail_01,P_FAIL,REVOKE_DOCUMENT_SCAN,SUCCESS,Patient changed mind on documents
 2026-08-30 19:20:49,sess_fail_01,P_FAIL,SESSION_PURGE,SUCCESS,Purging session details from memory (DPDP requirement)
+2026-09-03 21:04:25,sess_fail_01,P_FAIL,SESSION_START,SUCCESS,Initiate new clinical intake session
+2026-09-03 21:04:25,sess_fail_01,P_FAIL,GRANT_VOICE_INTAKE,SUCCESS,Voice intake
+2026-09-03 21:04:25,sess_fail_01,P_FAIL,GRANT_DOCUMENT_SCAN,SUCCESS,Scan docs
+2026-09-03 21:04:25,sess_fail_01,P_FAIL,REVOKE_DOCUMENT_SCAN,SUCCESS,Patient changed mind on documents
+2026-09-03 21:04:25,sess_fail_01,P_FAIL,SESSION_PURGE,SUCCESS,Purging session details from memory (DPDP requirement)
+2026-09-03 21:10:31,sess_fail_01,P_FAIL,SESSION_START,SUCCESS,Initiate new clinical intake session
+2026-09-03 21:10:31,sess_fail_01,P_FAIL,GRANT_VOICE_INTAKE,SUCCESS,Voice intake
+2026-09-03 21:10:31,sess_fail_01,P_FAIL,GRANT_DOCUMENT_SCAN,SUCCESS,Scan docs
+2026-09-03 21:10:31,sess_fail_01,P_FAIL,REVOKE_DOCUMENT_SCAN,SUCCESS,Patient changed mind on documents
+2026-09-03 21:10:31,sess_fail_01,P_FAIL,SESSION_PURGE,SUCCESS,Purging session details from memory (DPDP requirement)
+2026-09-03 21:10:53,sess_fail_01,P_FAIL,SESSION_START,SUCCESS,Initiate new clinical intake session
+2026-09-03 21:10:53,sess_fail_01,P_FAIL,GRANT_VOICE_INTAKE,SUCCESS,Voice intake
+2026-09-03 21:10:53,sess_fail_01,P_FAIL,GRANT_DOCUMENT_SCAN,SUCCESS,Scan docs
+2026-09-03 21:10:53,sess_fail_01,P_FAIL,REVOKE_DOCUMENT_SCAN,SUCCESS,Patient changed mind on documents
+2026-09-03 21:10:53,sess_fail_01,P_FAIL,SESSION_PURGE,SUCCESS,Purging session details from memory (DPDP requirement)
+2026-09-03 21:12:49,sess_fail_01,P_FAIL,SESSION_START,SUCCESS,Initiate new clinical intake session
+2026-09-03 21:12:49,sess_fail_01,P_FAIL,GRANT_VOICE_INTAKE,SUCCESS,Voice intake
+2026-09-03 21:12:49,sess_fail_01,P_FAIL,GRANT_DOCUMENT_SCAN,SUCCESS,Scan docs
+2026-09-03 21:12:49,sess_fail_01,P_FAIL,REVOKE_DOCUMENT_SCAN,SUCCESS,Patient changed mind on documents
+2026-09-03 21:12:49,sess_fail_01,P_FAIL,SESSION_PURGE,SUCCESS,Purging session details from memory (DPDP requirement)
+2026-09-03 21:13:05,sess_fail_01,P_FAIL,SESSION_START,SUCCESS,Initiate new clinical intake session
+2026-09-03 21:13:05,sess_fail_01,P_FAIL,GRANT_VOICE_INTAKE,SUCCESS,Voice intake
+2026-09-03 21:13:05,sess_fail_01,P_FAIL,GRANT_DOCUMENT_SCAN,SUCCESS,Scan docs
+2026-09-03 21:13:05,sess_fail_01,P_FAIL,REVOKE_DOCUMENT_SCAN,SUCCESS,Patient changed mind on documents
+2026-09-03 21:13:05,sess_fail_01,P_FAIL,SESSION_PURGE,SUCCESS,Purging session details from memory (DPDP requirement)
+2026-09-03 21:13:20,sess_fail_01,P_FAIL,SESSION_START,SUCCESS,Initiate new clinical intake session
+2026-09-03 21:13:20,sess_fail_01,P_FAIL,GRANT_VOICE_INTAKE,SUCCESS,Voice intake
+2026-09-03 21:13:20,sess_fail_01,P_FAIL,GRANT_DOCUMENT_SCAN,SUCCESS,Scan docs
+2026-09-03 21:13:20,sess_fail_01,P_FAIL,REVOKE_DOCUMENT_SCAN,SUCCESS,Patient changed mind on documents
+2026-09-03 21:13:20,sess_fail_01,P_FAIL,SESSION_PURGE,SUCCESS,Purging session details from memory (DPDP requirement)
+2026-09-03 21:15:41,sess_fail_01,P_FAIL,SESSION_START,SUCCESS,Initiate new clinical intake session
+2026-09-03 21:15:41,sess_fail_01,P_FAIL,GRANT_VOICE_INTAKE,SUCCESS,Voice intake
+2026-09-03 21:15:41,sess_fail_01,P_FAIL,GRANT_DOCUMENT_SCAN,SUCCESS,Scan docs
+2026-09-03 21:15:41,sess_fail_01,P_FAIL,REVOKE_DOCUMENT_SCAN,SUCCESS,Patient changed mind on documents
+2026-09-03 21:15:41,sess_fail_01,P_FAIL,SESSION_PURGE,SUCCESS,Purging session details from memory (DPDP requirement)
+2026-09-03 21:17:50,sess_fail_01,P_FAIL,SESSION_START,SUCCESS,Initiate new clinical intake session
+2026-09-03 21:17:50,sess_fail_01,P_FAIL,GRANT_VOICE_INTAKE,SUCCESS,Voice intake
+2026-09-03 21:17:50,sess_fail_01,P_FAIL,GRANT_DOCUMENT_SCAN,SUCCESS,Scan docs
+2026-09-03 21:17:50,sess_fail_01,P_FAIL,REVOKE_DOCUMENT_SCAN,SUCCESS,Patient changed mind on documents
+2026-09-03 21:17:50,sess_fail_01,P_FAIL,SESSION_PURGE,SUCCESS,Purging session details from memory (DPDP requirement)
+2026-09-03 21:19:17,sess_fail_01,P_FAIL,SESSION_START,SUCCESS,Initiate new clinical intake session
+2026-09-03 21:19:17,sess_fail_01,P_FAIL,GRANT_VOICE_INTAKE,SUCCESS,Voice intake
+2026-09-03 21:19:17,sess_fail_01,P_FAIL,GRANT_DOCUMENT_SCAN,SUCCESS,Scan docs
+2026-09-03 21:19:17,sess_fail_01,P_FAIL,REVOKE_DOCUMENT_SCAN,SUCCESS,Patient changed mind on documents
+2026-09-03 21:19:17,sess_fail_01,P_FAIL,SESSION_PURGE,SUCCESS,Purging session details from memory (DPDP requirement)
+2026-09-04 05:28:28,sess_fail_01,P_FAIL,SESSION_START,SUCCESS,Initiate new clinical intake session
+2026-09-04 05:28:28,sess_fail_01,P_FAIL,GRANT_VOICE_INTAKE,SUCCESS,Voice intake
+2026-09-04 05:28:28,sess_fail_01,P_FAIL,GRANT_DOCUMENT_SCAN,SUCCESS,Scan docs
+2026-09-04 05:28:28,sess_fail_01,P_FAIL,REVOKE_DOCUMENT_SCAN,SUCCESS,Patient changed mind on documents
+2026-09-04 05:28:28,sess_fail_01,P_FAIL,SESSION_PURGE,SUCCESS,Purging session details from memory (DPDP requirement)
+2026-09-04 22:22:11,sess_fail_01,P_FAIL,SESSION_START,SUCCESS,Initiate new clinical intake session
+2026-09-04 22:22:11,sess_fail_01,P_FAIL,GRANT_VOICE_INTAKE,SUCCESS,Voice intake
+2026-09-04 22:22:11,sess_fail_01,P_FAIL,GRANT_DOCUMENT_SCAN,SUCCESS,Scan docs
+2026-09-04 22:22:11,sess_fail_01,P_FAIL,REVOKE_DOCUMENT_SCAN,SUCCESS,Patient changed mind on documents
+2026-09-04 22:22:11,sess_fail_01,P_FAIL,SESSION_PURGE,SUCCESS,Purging session details from memory (DPDP requirement)

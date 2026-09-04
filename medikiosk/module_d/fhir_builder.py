@@ -56,7 +56,7 @@ class FHIRBundleBuilder:
         for idx, allergy in enumerate(ontology.allergy_history):
             entries.append(self._to_bundle_entry(self._build_allergy_intolerance(f"allergy-{idx}", allergy)))
 
-        # 7. AYUSH Parameters as Observations (if present)
+        # 7. AYUSH Parameters as Observations & NAMASTE Conditions (if present)
         if ontology.ayush:
             ayush = ontology.ayush
             ayush_fields = [
@@ -70,11 +70,24 @@ class FHIRBundleBuilder:
                 ("ahara_shakti", ayush.ahara_shakti),
                 ("vyayama_shakti", ayush.vyayama_shakti),
                 ("vaya", ayush.vaya),
-                ("ahara_vihara", ayush.ahara_vihara)
+                ("ahara_vihara", ayush.ahara_vihara),
+                ("nidana", ayush.nidana),
+                ("samprapti", ayush.samprapti),
+                ("dhatu_involvement", ayush.dhatu_involvement),
+                ("srota_involvement", ayush.srota_involvement)
             ]
             for name, val in ayush_fields:
                 if val:
                     entries.append(self._to_bundle_entry(self._build_observation(f"ayush-{name.replace('_', '-')}", val, category="ayush")))
+
+            # Dosha balance scores Observation
+            if ayush.vata_score or ayush.pitta_score or ayush.kapha_score:
+                dosha_str = f"Vata: {ayush.vata_score}%, Pitta: {ayush.pitta_score}%, Kapha: {ayush.kapha_score}%"
+                entries.append(self._to_bundle_entry(self._build_observation("ayush-dosha-balance", dosha_str, category="ayush")))
+
+            # NAMASTE / ICD-11-TM2 Traditional Morbidity Conditions
+            for idx, namaste in enumerate(ayush.namaste_diagnoses):
+                entries.append(self._to_bundle_entry(self._build_namaste_condition(f"namaste-condition-{idx}", namaste)))
 
         # 8. Scanned Documents as DocumentReferences
         if documents:
@@ -109,6 +122,56 @@ class FHIRBundleBuilder:
             },
             "code": {
                 "text": code_text
+            },
+            "subject": {
+                "reference": self.patient_id
+            }
+        }
+
+    def _build_namaste_condition(self, condition_id: str, namaste_code: Any) -> Dict[str, Any]:
+        codings = []
+        n_code = getattr(namaste_code, "namaste_code", "") if hasattr(namaste_code, "namaste_code") else namaste_code.get("namaste_code", "")
+        n_term = getattr(namaste_code, "namaste_term", "") if hasattr(namaste_code, "namaste_term") else namaste_code.get("namaste_term", "")
+        icd_code = getattr(namaste_code, "icd11_tm2_code", None) if hasattr(namaste_code, "icd11_tm2_code") else namaste_code.get("icd11_tm2_code")
+        
+        if n_code:
+            codings.append({
+                "system": "http://namaste.ayush.gov.in",
+                "code": n_code,
+                "display": n_term
+            })
+        if icd_code:
+            codings.append({
+                "system": "http://id.who.int/icd/release/11/mms/tm2",
+                "code": icd_code,
+                "display": n_term
+            })
+            
+        return {
+            "resourceType": "Condition",
+            "id": condition_id,
+            "clinicalStatus": {
+                "coding": [
+                    {
+                        "system": "http://terminology.hl7.org/CodeSystem/condition-clinical",
+                        "code": "active"
+                    }
+                ]
+            },
+            "category": [
+                {
+                    "coding": [
+                        {
+                            "system": "http://terminology.hl7.org/CodeSystem/condition-category",
+                            "code": "problem-list-item",
+                            "display": "Traditional Medicine Diagnosis (AYUSH)"
+                        }
+                    ]
+                }
+            ],
+            "code": {
+                "coding": codings,
+                "text": n_term or n_code
             },
             "subject": {
                 "reference": self.patient_id

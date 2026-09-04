@@ -39,11 +39,28 @@ FHIR_MAPPING_CONTRACTS = {
     "ayush_vyayama_shakti": "Observation",
     "ayush_vaya": "Observation",
     "ayush_ahara_vihara": "Observation",
+    "ayush_dosha_scores": "Observation",
+    "ayush_namaste_codes": "Condition",
+    "ayush_nidana": "Observation",
+    "ayush_samprapti": "Observation",
 }
 
 # ==========================================
 # 2. ONTOLOGY DATA MODELS
 # ==========================================
+
+@dataclass
+class NAMASTECode:
+    """
+    National AYUSH Morbidity and Standardized Terminologies Electronic (NAMASTE) code structure.
+    Cross-referenced with WHO ICD-11 Traditional Medicine Module 2 (TM2) where applicable.
+    """
+    namaste_code: str
+    namaste_term: str
+    icd11_tm2_code: Optional[str] = None
+    ayush_system: str = "Ayurveda"
+    category: str = "General Morbidity"
+    description: Optional[str] = None
 
 @dataclass
 class SOCRATES_HPI:
@@ -58,6 +75,10 @@ class SOCRATES_HPI:
 
 @dataclass
 class AYUSHExtension:
+    """
+    Comprehensive AYUSH Dashavidha Pariksha & Traditional Clinical Ontology.
+    Captures all 10 clinical examination parameters, quantitative dosha scores, and NAMASTE codes.
+    """
     prakriti: Optional[str] = None
     vikriti: Optional[str] = None
     sara: Optional[str] = None
@@ -69,6 +90,17 @@ class AYUSHExtension:
     vyayama_shakti: Optional[str] = None
     vaya: Optional[str] = None
     ahara_vihara: Optional[str] = None
+    # Scored Dosha Metrics (0 - 100 percentage)
+    vata_score: float = 0.0
+    pitta_score: float = 0.0
+    kapha_score: float = 0.0
+    # NAMASTE / ICD-11 TM2 traditional disease codings
+    namaste_diagnoses: List[NAMASTECode] = field(default_factory=list)
+    # Vaidya Clinical Assessment Notes
+    nidana: Optional[str] = None       # Etiological factors
+    samprapti: Optional[str] = None   # Pathogenesis & disease progression
+    dhatu_involvement: Optional[str] = None
+    srota_involvement: Optional[str] = None
 
 @dataclass
 class ClinicalOntology:

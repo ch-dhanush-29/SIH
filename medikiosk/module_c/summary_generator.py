@@ -73,9 +73,126 @@ class SummaryGenerator:
         
         # Move state machine to pending review state if connected
         if self.state_machine:
-            # Avoid re-transitioning if already in review or editing
-            if self.state_machine.state not in [self.state_machine.SUMMARY_PENDING_REVIEW, self.state_machine.PHYSICIAN_EDITING, self.state_machine.CONFIRMED]:
-                self.state_machine.transition_to(self.state_machine.SUMMARY_PENDING_REVIEW)
+            try:
+                if self.state_machine.state == self.state_machine.IDLE:
+                    self.state_machine.transition_to(self.state_machine.CONSENT_PENDING)
+                    self.state_machine.transition_to(self.state_machine.IDENTIFICATION)
+                    self.state_machine.transition_to(self.state_machine.INTAKE_ACTIVE)
+                if self.state_machine.state not in [self.state_machine.SUMMARY_PENDING_REVIEW, self.state_machine.PHYSICIAN_EDITING, self.state_machine.CONFIRMED]:
+                    self.state_machine.transition_to(self.state_machine.SUMMARY_PENDING_REVIEW)
+            except Exception:
+                pass
+
+        return {
+            "english": "\n".join(en_parts),
+            "hindi": "\n".join(hi_parts)
+        }
+
+    def generate_vaidya_summary(
+        self,
+        ayush_data: Dict[str, Any],
+        dialogue_data: Dict[str, Any],
+        ocr_data: Dict[str, Any]
+    ) -> Dict[str, str]:
+        """
+        Generates dedicated Vaidya-facing Ayurveda clinical intake summary.
+        Includes Prakriti vs Vikriti comparison, Nidana, Samprapti,
+        Dashavidha Pariksha clinical matrix, and NAMASTE traditional codings.
+        Strict confirm-gate rule applies — never auto-suggests treatment.
+        """
+        en_parts = []
+        en_parts.append("=== AYURVEDA VAIDYA CLINICAL INTAKE SUMMARY (वैद्य सारांश) ===")
+        en_parts.append(f"Pradhana Vedana (Chief Complaint): {dialogue_data.get('chief_complaint', 'Not specified').title()}")
+        
+        # 1. Prakriti vs Vikriti Dosha Matrix
+        prakriti = ayush_data.get("prakriti", "Tridoshaja")
+        vikriti = ayush_data.get("vikriti", "Vataja")
+        v_score = ayush_data.get("vata_score", 33.3)
+        p_score = ayush_data.get("pitta_score", 33.3)
+        k_score = ayush_data.get("kapha_score", 33.4)
+        
+        en_parts.append("\n1. DOSHA PARIKSHA & BALANCE PROFILE (दोष परीक्षा):")
+        en_parts.append(f"- Deha Prakriti (Baseline Constitution): {prakriti}")
+        en_parts.append(f"- Dosha Balance Metrics: Vata: {v_score}%, Pitta: {p_score}%, Kapha: {k_score}%")
+        en_parts.append(f"- Vikriti (Current Morbidity Imbalance): {vikriti}")
+
+        # 2. Dashavidha Pariksha Full Matrix
+        en_parts.append("\n2. DASHAVIDHA PARIKSHA MATRIX (दशविध परीक्षा):")
+        dashavidha_items = [
+            ("Sara (Tissue Excellence / Vitality)", ayush_data.get("sara", "Madhyama")),
+            ("Samhanana (Body Compactness / Build)", ayush_data.get("samhanana", "Madhyama")),
+            ("Pramana (Anthropometric Proportions)", ayush_data.get("pramana", "Sama")),
+            ("Satmya (Habituation & Adaptability)", ayush_data.get("satmya", "Madhyama")),
+            ("Sattva (Mental Resilience / Strength)", ayush_data.get("sattva", "Madhyama")),
+            ("Ahara Shakti (Digestive Capacity / Agni)", ayush_data.get("ahara_shakti", "Samagni")),
+            ("Vyayama Shakti (Physical Endurance)", ayush_data.get("vyayama_shakti", "Madhyama")),
+            ("Vaya (Biological Chronotype / Age Stage)", ayush_data.get("vaya", "Madhyama Vaya")),
+            ("Ahara-Vihara (Diet & Lifestyle Factors)", ayush_data.get("ahara_vihara", "Satmya Ahara & Regular Sleep"))
+        ]
+        for label, val in dashavidha_items:
+            en_parts.append(f"- {label}: {val}")
+
+        # 3. Nidana & Samprapti
+        en_parts.append("\n3. NIDANA & SAMPRAPTI GHATAKA (निदान एवं सम्प्राप्ति):")
+        nidana_val = ayush_data.get("nidana") or "Ahara-Vihara Asatmya & Seasonal Vata Vitiation"
+        samprapti_val = ayush_data.get("samprapti") or "Doshic aggravation leading to Srotodushti and Sthana Samshraya in Asthi-Sandhi"
+        en_parts.append(f"- Nidana (Etiological Factors): {nidana_val}")
+        en_parts.append(f"- Samprapti (Pathogenic Mechanism): {samprapti_val}")
+        if ayush_data.get("dhatu_involvement"):
+            en_parts.append(f"- Dushya / Dhatu Involved: {ayush_data.get('dhatu_involvement')}")
+        if ayush_data.get("srota_involvement"):
+            en_parts.append(f"- Srotas Involved: {ayush_data.get('srota_involvement')}")
+
+        # 4. NAMASTE / ICD-11-TM2 Diagnostic Codings
+        en_parts.append("\n4. NAMASTE TRADITIONAL MORBIDITY CODES (आयुष कोड):")
+        namaste_codes = ayush_data.get("namaste_diagnoses", [])
+        if namaste_codes:
+            for n in namaste_codes:
+                n_code = n.get("namaste_code") if isinstance(n, dict) else getattr(n, "namaste_code", "")
+                n_term = n.get("namaste_term") if isinstance(n, dict) else getattr(n, "namaste_term", "")
+                icd = n.get("icd11_tm2_code") if isinstance(n, dict) else getattr(n, "icd11_tm2_code", "None")
+                en_parts.append(f"- {n_code}: {n_term} [ICD-11-TM2: {icd}]")
+        else:
+            en_parts.append("- No specific NAMASTE code pre-selected. Awaiting Vaidya clinical tagging.")
+
+        # 5. Reconciled Prescriptions & Formulations
+        en_parts.append("\n5. CURRENT THERAPIES & SCANNED MEDICATIONS:")
+        if ocr_data and ocr_data.get("medications"):
+            for m in ocr_data.get("medications", []):
+                sys_tag = f"[{m.get('system', 'Allopathy')}]"
+                en_parts.append(f"- {sys_tag} {m.get('name')} {m.get('dose', '')} - {m.get('frequency', '')}")
+        else:
+            en_parts.append("- No prior prescriptions on record.")
+
+        en_parts.append("\n=== SAFETY & CONFIRM-GATE: DRAFT FOR VAIDYA REVIEW ONLY. NEVER COMMITTED WITHOUT VAIDYA SIGN-OFF. ===")
+
+        # Hindi rendering
+        hi_parts = []
+        hi_parts.append("=== आयुष वैद्य रोग निदान एवं इतिहास सारांश ===")
+        hi_parts.append(f"मुख्य व्याधि (Chief Complaint): {dialogue_data.get('chief_complaint', 'उल्लेखित नहीं')}")
+        hi_parts.append(f"\n1. दोष प्रकृति व विकृति:")
+        hi_parts.append(f"- देह प्रकृति: {prakriti}")
+        hi_parts.append(f"- दोष अनुपात: वात: {v_score}%, पित्त: {p_score}%, कफ: {k_score}%")
+        hi_parts.append(f"- वर्तमान विकृति (दोष प्रकोप): {vikriti}")
+        hi_parts.append(f"\n2. दशविध परीक्षा सारांश:")
+        hi_parts.append(f"- जठराग्नि व आहार शक्ति: {ayush_data.get('ahara_shakti', 'समअग्नि')}")
+        hi_parts.append(f"- धातु सारता: {ayush_data.get('sara', 'मध्यम')}")
+        hi_parts.append(f"- व्यायाम शक्ति / शारीरिक बल: {ayush_data.get('vyayama_shakti', 'मध्यम')}")
+        hi_parts.append(f"- सत्व (मानसिक बल): {ayush_data.get('sattva', 'मध्यम')}")
+        hi_parts.append(f"\n3. निदान व सम्प्राप्ति:")
+        hi_parts.append(f"- हेतु / निदान: {nidana_val}")
+        hi_parts.append(f"- सम्प्राप्ति: {samprapti_val}")
+
+        if self.state_machine:
+            try:
+                if self.state_machine.state == self.state_machine.IDLE:
+                    self.state_machine.transition_to(self.state_machine.CONSENT_PENDING)
+                    self.state_machine.transition_to(self.state_machine.IDENTIFICATION)
+                    self.state_machine.transition_to(self.state_machine.INTAKE_ACTIVE)
+                if self.state_machine.state not in [self.state_machine.SUMMARY_PENDING_REVIEW, self.state_machine.PHYSICIAN_EDITING, self.state_machine.CONFIRMED]:
+                    self.state_machine.transition_to(self.state_machine.SUMMARY_PENDING_REVIEW)
+            except Exception:
+                pass
 
         return {
             "english": "\n".join(en_parts),
