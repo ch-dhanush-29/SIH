@@ -3,7 +3,7 @@ import { motion, AnimatePresence } from 'framer-motion'
 import {
   MessageSquare, X, Send, Bot, User, Sparkles, Volume2, VolumeX, Mic, MicOff,
   Maximize2, Minimize2, Trash2, ArrowRight, ShieldCheck, CheckCircle2,
-  Stethoscope, Activity, Radio, AlertTriangle, RefreshCw
+  Stethoscope, Activity, Radio, AlertTriangle, RefreshCw, Copy, Check, Headphones
 } from 'lucide-react'
 
 export default function MediKioskChatbot({ theme = 'dark', activeView = 'overview' }) {
@@ -15,6 +15,8 @@ export default function MediKioskChatbot({ theme = 'dark', activeView = 'overvie
   const [activeLanguage, setActiveLanguage] = useState('en')
   const [autoSpeak, setAutoSpeak] = useState(false)
   const [isListening, setIsListening] = useState(false)
+  const [copiedId, setCopiedId] = useState(null)
+  const [speakingMsgId, setSpeakingMsgId] = useState(null)
   
   const [messages, setMessages] = useState([
     {
@@ -79,7 +81,34 @@ export default function MediKioskChatbot({ theme = 'dark', activeView = 'overvie
     ],
     kn: [
       { label: 'OPD ಟೋಕನ್ ಪ್ರಕ್ರಿಯೆ', query: 'ಮೆಡಿಕಿಯೋಸ್ಕ್ ರೋಗಿಗೆ OPD ಟೋಕನ್ ಅನ್ನು ಹೇಗೆ ನೀಡುತ್ತದೆ?' },
-      { label: 'ತುರ್ತು ರೆಡ್-ಫ್ಲ್ಯಾಗ್ ಲಕ್ಷಣಗಳು', query: 'ಮೆಡಿಕಿಯೋಸ್ಕ್‌ನಲ್ಲಿನ 5 ತುರ್ತು ರೆಡ್-ಫ್ಲ್ಯಾಗ್ ಲಕ್ಷಣಗಳನ್ನು ವಿವರಿಸಿ.' }
+      { label: 'ತುರ್ತು ರೆಡ್-ಫ್ಲ್ಯಾಗ್ ಲಕ್ಷಣಗಳು', query: 'ಮೆಡಿಕಿಯೋಸ್ಕ್‌ನಲ್ಲಿನ 5 ತುರ್ತು ರೆಡ್-ಫ್ಲ್ಯಾಗ್ ಲಕ್ಷಣಗಳನ್ನು ವಿವರಿಸಿ.' },
+      { label: 'ಆಯುರ್ವೇದ ಪ್ರಕೃತಿ & ವಿಕೃತಿ', query: 'ಆಯುಷ್ ವಿಭಾಗದಲ್ಲಿ ಪ್ರಕೃತಿ ಮತ್ತು ವಿಕೃತಿಯನ್ನು ಹೇಗೆ ಲೆಕ್ಕಹಾಕಲಾಗುತ್ತದೆ?' },
+      { label: 'ಪ್ರಿಸ್ಕ್ರಿಪ್ಷನ್ ಸ್ಕ್ಯಾನಿಂಗ್', query: 'ಪ್ರಿಸ್ಕ್ರಿಪ್ಷನ್ OCR ಔಷಧಿಗಳ ಡೋಸೇಜ್ ಪರಿಶೀಲನೆ ಹೇಗೆ ಮಾಡುತ್ತದೆ?' }
+    ],
+    ml: [
+      { label: 'OPD ടോക്കൺ പ്രക്രിയ', query: 'മെഡിക്കിയോസ്ക് ഒരു രോഗിക്ക് OPD ടോക്കൺ എങ്ങനെ നൽകുന്നു?' },
+      { label: 'റെഡ്-ഫ്ലാഗ് അടിയന്തിര ലക്ഷണങ്ങൾ', query: 'മെഡിക്കിയോസ്ക് ട്രയാജിലെ 5 അടിയന്തിര റെഡ്-ഫ്ലാഗ് ലക്ഷണങ്ങൾ എന്തൊക്കെയാണ്?' },
+      { label: 'ആയുർവേദ പ്രകൃതിയും വികൃതിയും', query: 'ആയുഷ് വിഭാഗത്തിൽ പ്രകൃതിയും വികൃതിയും എങ്ങനെ നിർണ്ണയിക്കുന്നു?' }
+    ],
+    gu: [
+      { label: 'OPD ટોકન પ્રક્રિયા', query: 'મેડિકિયોસ્ક દર્દી માટે OPD ટોકન કેવી રીતે બનાવે છે?' },
+      { label: 'ઇમરજન્સી રેડ-ફ્લેગ લક્ષણો', query: 'મેડિકિયોસ્કમાં ૫ ગંભીર ઇમરજન્સી રેડ-ફ્લેગ લક્ષણો કયા છે?' },
+      { label: 'આયુર્વેદ પ્રકૃતિ અને વિકૃતિ', query: 'આયુષ ઇનટેકમાં પ્રકૃતિ અને વિકૃતિની ગણતરી કેવી રીતે થાય છે?' }
+    ],
+    pa: [
+      { label: 'OPD ਟੋਕਨ ਪ੍ਰਕਿਰਿਆ', query: 'ਮੈਡੀਕਿਓਸਕ ਮਰੀਜ਼ ਲਈ OPD ਟੋਕਨ ਕਿਵੇਂ ਤਿਆਰ ਕਰਦਾ ਹੈ?' },
+      { label: 'ਐਮਰਜੈਂਸੀ ਰੈੱਡ-ਫਲੈਗ ਲੱਛਣ', query: 'ਮੈਡੀਕਿਓਸਕ ਟ੍ਰਾਈਜ਼ ਵਿੱਚ 5 ਗੰਭੀਰ ਐਮਰਜੈਂਸੀ ਰੈੱਡ-ਫਲੈਗ ਲੱਛਣ ਕਿਹੜੇ ਹਨ?' },
+      { label: 'ਆਯੁਰਵੇਦ ਪ੍ਰਕ੍ਰਿਤੀ ਅਤੇ ਵਿਕ੍ਰਿਤੀ', query: 'ਆਯੁਸ਼ ਇਨਟੇਕ ਵਿੱਚ ਪ੍ਰਕ੍ਰਿਤੀ ਅਤੇ ਵਿਕ੍ਰਿਤੀ ਦੀ ਗਣਨਾ ਕਿਵੇਂ ਹੁੰਦੀ ਹੈ?' }
+    ],
+    or: [
+      { label: 'OPD ଟୋକନ ପ୍ରକ୍ରିୟା', query: 'ମେଡିକିଓସ୍କ ରୋଗୀଙ୍କ ପାଇଁ OPD ଟୋକନ କିପରି ପ୍ରସ୍ତୁତ କରେ?' },
+      { label: 'ଜରୁରୀକାଳୀନ ରେଡ-ଫ୍ଲାଗ ଲକ୍ଷଣ', query: 'ମେଡିକିଓସ୍କରେ ୫ଟି ଜରୁରୀକାଳୀନ ରେଡ-ଫ୍ଲାଗ ଲକ୍ଷଣ କ’ଣ?' },
+      { label: 'ଆୟୁର୍ବେଦ ପ୍ରକୃତି ଓ ବିକୃତି', query: 'ଆୟୁଷ ବିଭାଗରେ ପ୍ରକୃତି ଏବଂ ବିକୃତି କିପରି ନିର୍ଣ୍ଣୟ କରାଯାଏ?' }
+    ],
+    as: [
+      { label: 'OPD টোকেন প্ৰক্ৰিয়া', query: 'মেডিকিঅ’স্কে ৰোগীৰ বাবে OPD টোকেন কেনেকৈ প্ৰস্তুত কৰে?' },
+      { label: 'জৰুৰী ৰেড-ফ্লেগ লক্ষণ', query: 'মেডিকিঅ’স্ক ট্ৰায়াজত ৫টা জৰুৰী ৰেড-ফ্লেগ লক্ষণ কি কি?' },
+      { label: 'আয়ুৰ্বেদ প্ৰকৃতি আৰু বিকৃতি', query: 'আয়ুষ বিভাগত প্ৰকৃতি আৰু বিকৃতি কেনেকৈ নিৰ্ণয় কৰা হয়?' }
     ]
   }
 
@@ -260,12 +289,29 @@ CRITICAL LANGUAGE RULE: You MUST write your ENTIRE response strictly in ${target
       } catch (e) {}
     }
     setIsSpeaking(false)
+    setSpeakingMsgId(null)
   }
 
-  const handleSpeakText = async (text) => {
+  const handleCopyText = (text, msgId) => {
+    if (typeof navigator !== 'undefined' && navigator.clipboard) {
+      navigator.clipboard.writeText(text)
+      setCopiedId(msgId)
+      setTimeout(() => setCopiedId(null), 2000)
+    }
+  }
+
+  const handleSpeakText = async (text, msgId = null) => {
     if (!text || typeof window === 'undefined') return
+    
+    // Toggle stop if already speaking this message
+    if (isSpeaking && speakingMsgId === msgId) {
+      stopSpeech()
+      return
+    }
+
     stopSpeech()
     setIsSpeaking(true)
+    if (msgId) setSpeakingMsgId(msgId)
 
     const cleanText = text
       .replace(/[*_#`~>\[\]\(\)]/g, '')
@@ -293,8 +339,14 @@ CRITICAL LANGUAGE RULE: You MUST write your ENTIRE response strictly in ${target
         if (data.audio_base64) {
           const audio = new Audio(data.audio_base64)
           audio.playbackRate = 1.05
-          audio.onended = () => setIsSpeaking(false)
-          audio.onerror = () => setIsSpeaking(false)
+          audio.onended = () => {
+            setIsSpeaking(false)
+            setSpeakingMsgId(null)
+          }
+          audio.onerror = () => {
+            setIsSpeaking(false)
+            setSpeakingMsgId(null)
+          }
           currentAudioRef.current = audio
           await audio.play()
           return
@@ -324,7 +376,10 @@ CRITICAL LANGUAGE RULE: You MUST write your ENTIRE response strictly in ${target
       const audioUrl = `https://translate.google.com/translate_tts?ie=UTF-8&q=${encodeURIComponent(cleanText.substring(0, 200))}&tl=${ttsLangCode}&client=tw-ob`
       const directAudio = new Audio(audioUrl)
       directAudio.playbackRate = 1.0
-      directAudio.onended = () => setIsSpeaking(false)
+      directAudio.onended = () => {
+        setIsSpeaking(false)
+        setSpeakingMsgId(null)
+      }
       directAudio.onerror = () => {
         // Fallback to Tier 3
         playBrowserSpeech(cleanText, targetLang)
@@ -375,14 +430,22 @@ CRITICAL LANGUAGE RULE: You MUST write your ENTIRE response strictly in ${target
 
         utterance.rate = 0.95
         utterance.pitch = 1.0
-        utterance.onend = () => setIsSpeaking(false)
-        utterance.onerror = () => setIsSpeaking(false)
+        utterance.onend = () => {
+          setIsSpeaking(false)
+          setSpeakingMsgId(null)
+        }
+        utterance.onerror = () => {
+          setIsSpeaking(false)
+          setSpeakingMsgId(null)
+        }
         window.speechSynthesis.speak(utterance)
       } catch (e) {
         setIsSpeaking(false)
+        setSpeakingMsgId(null)
       }
     } else {
       setIsSpeaking(false)
+      setSpeakingMsgId(null)
     }
   }
 
@@ -584,7 +647,7 @@ CRITICAL LANGUAGE RULE: You MUST write your ENTIRE response strictly in ${target
                 <Radio className="w-3.5 h-3.5 text-saffron" />
                 <span>Response Language:</span>
               </div>
-              <div className="flex flex-wrap gap-1">
+              <div className="flex flex-wrap gap-1 max-w-[70%] justify-end">
                 {[
                   { code: 'en', label: 'English', greeting: 'Hello! How can I assist your hospital visit today?' },
                   { code: 'hi', label: 'हिन्दी', greeting: 'नमस्ते! मैं आज आपकी अस्पताल यात्रा में कैसे सहायता कर सकता हूँ?' },
@@ -592,23 +655,29 @@ CRITICAL LANGUAGE RULE: You MUST write your ENTIRE response strictly in ${target
                   { code: 'ta', label: 'தமிழ்', greeting: 'வணக்கம்! உங்கள் மருத்துவமனை வருகைக்கு நான் எவ்வாறு உதவ முடியும்?' },
                   { code: 'bn', label: 'বাংলা', greeting: 'নমস্কার! আপনার হাসপাতাল পরিদর্শনে আমি কীভাবে সাহায্য করতে পারি?' },
                   { code: 'mr', label: 'मराठी', greeting: 'नमस्कार! मी तुम्हाला रुग्णालयाच्या भेटीत कशी मदत करू शकतो?' },
-                  { code: 'kn', label: 'ಕನ್ನಡ', greeting: 'ನಮಸ್ಕಾರ! ನಿಮ್ಮ ಆಸ್ಪತ್ರೆಯ ಭೇಟಿಯಲ್ಲಿ ನಾನು ನಿಮಗೆ ಹೇಗೆ ಸಹಾಯ ಮಾಡಬಹುದು?' }
+                  { code: 'kn', label: 'ಕನ್ನಡ', greeting: 'ನಮಸ್ಕಾರ! ನಿಮ್ಮ ಆಸ್ಪತ್ರೆಯ ಭೇಟಿಯಲ್ಲಿ ನಾನು ನಿಮಗೆ ಹೇಗೆ ಸಹಾಯ ಮಾಡಬಹುದು?' },
+                  { code: 'ml', label: 'മലയാളം', greeting: 'നമസ്കാരം! നിങ്ങളുടെ ആശുപത്രി സന്ദർശനത്തിൽ ഞാൻ എങ്ങനെ സഹായിക്കണം?' },
+                  { code: 'gu', label: 'ગુજરાતી', greeting: 'નમસ્તે! હું આજે તમારી હોસ્પિટલ મુલાકાતમાં કેવી રીતે મદદ કરી શકું?' },
+                  { code: 'pa', label: 'ਪੰਜਾਬੀ', greeting: 'ਸਤਿ ਸ੍ਰੀ ਅਕਾਲ! ਮੈਂ ਅੱਜ ਤੁਹਾਡੀ ਹਸਪਤਾਲ ਦੀ ਫੇਰੀ ਵਿੱਚ ਕਿਵੇਂ ਮਦਦ ਕਰ ਸਕਦਾ ਹਾਂ?' },
+                  { code: 'or', label: 'ଓଡ଼ିଆ', greeting: 'ନମସ୍କାର! ଆପଣଙ୍କ ଡାକ୍ତରଖାନା ଯାତ୍ରାରେ ମୁଁ କିପରି ସାହାଯ୍ୟ କରିପାରିବି?' },
+                  { code: 'as', label: 'অসমীয়া', greeting: 'নমস্কাৰ! আপোনাৰ চিকিৎসালয় ভ্ৰমণত মই কেনেকৈ সহায় কৰিব পাৰো?' }
                 ].map(l => (
                   <button
                     key={l.code}
                     onClick={() => {
                       setActiveLanguage(l.code)
-                      setMessages(prev => [
-                        ...prev,
-                        {
-                          id: 'lang_switch_' + Date.now(),
-                          role: 'assistant',
-                          content: `🌐 **Language switched to ${l.label}**\n${l.greeting}`,
-                          timestamp: new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })
-                        }
-                      ])
+                      const switchMsg = {
+                        id: 'lang_switch_' + Date.now(),
+                        role: 'assistant',
+                        content: `🌐 **Language switched to ${l.label}**\n${l.greeting}`,
+                        timestamp: new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })
+                      }
+                      setMessages(prev => [...prev, switchMsg])
+                      if (autoSpeak) {
+                        handleSpeakText(l.greeting)
+                      }
                     }}
-                    className={`px-2.5 py-1 rounded-lg text-[10px] font-bold transition-all cursor-pointer ${
+                    className={`px-2 py-0.5 rounded-lg text-[10px] font-bold transition-all cursor-pointer ${
                       activeLanguage === l.code
                         ? 'bg-saffron text-slate-950 shadow-md font-extrabold scale-105'
                         : isLight ? 'bg-white text-slate-700 hover:bg-slate-200 border border-slate-200' : 'bg-slate-800 text-slate-400 hover:bg-slate-700 border border-slate-700'
@@ -658,11 +727,26 @@ CRITICAL LANGUAGE RULE: You MUST write your ENTIRE response strictly in ${target
                           <div className="flex items-center gap-1.5">
                             {m.model && <span className="text-[9px] opacity-75">{m.model}</span>}
                             <button
-                              onClick={() => handleSpeakText(m.content)}
-                              title="Listen to message"
-                              className="p-1 rounded hover:bg-slate-700/30 transition-colors cursor-pointer"
+                              onClick={() => handleCopyText(m.content, m.id)}
+                              title={copiedId === m.id ? 'Copied to clipboard!' : 'Copy response text'}
+                              className="p-1 rounded hover:bg-slate-700/30 transition-colors cursor-pointer text-slate-400 hover:text-white"
                             >
-                              <Volume2 className="w-3 h-3 text-cyan-400" />
+                              {copiedId === m.id ? <Check className="w-3 h-3 text-emerald-400" /> : <Copy className="w-3 h-3" />}
+                            </button>
+                            <button
+                              onClick={() => handleSpeakText(m.content, m.id)}
+                              title={isSpeaking && speakingMsgId === m.id ? 'Stop listening' : 'Listen to message'}
+                              className={`p-1 rounded transition-all cursor-pointer ${
+                                isSpeaking && speakingMsgId === m.id
+                                  ? 'bg-cyan-500/20 text-cyan-400 ring-1 ring-cyan-400/50 scale-110'
+                                  : 'hover:bg-slate-700/30 text-cyan-400'
+                              }`}
+                            >
+                              {isSpeaking && speakingMsgId === m.id ? (
+                                <Headphones className="w-3 h-3 text-cyan-300 animate-pulse" />
+                              ) : (
+                                <Volume2 className="w-3 h-3" />
+                              )}
                             </button>
                           </div>
                         )}
