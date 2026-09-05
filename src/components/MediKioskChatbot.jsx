@@ -1,7 +1,7 @@
 import React, { useState, useRef, useEffect } from 'react'
 import { motion, AnimatePresence } from 'framer-motion'
 import {
-  MessageSquare, X, Send, Bot, User, Sparkles, Volume2, Mic,
+  MessageSquare, X, Send, Bot, User, Sparkles, Volume2, VolumeX, Mic, MicOff,
   Maximize2, Minimize2, Trash2, ArrowRight, ShieldCheck, CheckCircle2,
   Stethoscope, Activity, Radio, AlertTriangle, RefreshCw
 } from 'lucide-react'
@@ -13,6 +13,8 @@ export default function MediKioskChatbot({ theme = 'dark', activeView = 'overvie
   const [inputMessage, setInputMessage] = useState('')
   const [isLoading, setIsLoading] = useState(false)
   const [activeLanguage, setActiveLanguage] = useState('en')
+  const [autoSpeak, setAutoSpeak] = useState(false)
+  const [isListening, setIsListening] = useState(false)
   
   const [messages, setMessages] = useState([
     {
@@ -212,6 +214,9 @@ CRITICAL LANGUAGE RULE: You MUST write your ENTIRE response strictly in ${target
           timestamp: new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })
         }
         setMessages(prev => [...prev, botMsg])
+        if (autoSpeak) {
+          handleSpeakText(replyText)
+        }
       } else {
         throw new Error('All communication channels failed')
       }
@@ -224,6 +229,9 @@ CRITICAL LANGUAGE RULE: You MUST write your ENTIRE response strictly in ${target
         timestamp: new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })
       }
       setMessages(prev => [...prev, fallbackMsg])
+      if (autoSpeak) {
+        handleSpeakText(fallbackMsg.content)
+      }
     } finally {
       setIsLoading(false)
     }
@@ -239,14 +247,101 @@ CRITICAL LANGUAGE RULE: You MUST write your ENTIRE response strictly in ${target
   const handleSpeakText = (text) => {
     if (typeof window !== 'undefined' && 'speechSynthesis' in window) {
       window.speechSynthesis.cancel()
-      const cleanText = text.replace(/[*_#`]/g, '')
-      const utterance = new SpeechSynthesisUtterance(cleanText.substring(0, 300))
-      utterance.lang = activeLanguage === 'hi' ? 'hi-IN' : 'en-IN'
+      const cleanText = text.replace(/[*_#`]/g, '').trim()
+      const utterance = new SpeechSynthesisUtterance(cleanText.substring(0, 400))
+      
+      const langSpeechCodeMap = {
+        en: 'en-IN',
+        hi: 'hi-IN',
+        te: 'te-IN',
+        ta: 'ta-IN',
+        kn: 'kn-IN',
+        ml: 'ml-IN',
+        mr: 'mr-IN',
+        bn: 'bn-IN',
+        gu: 'gu-IN',
+        pa: 'pa-IN',
+        or: 'or-IN',
+        as: 'as-IN'
+      }
+
+      const targetLangTag = langSpeechCodeMap[activeLanguage] || 'en-IN'
+      utterance.lang = targetLangTag
+
+      // Dynamically select best matching voice if available in browser
+      const voices = window.speechSynthesis.getVoices() || []
+      const matchedVoice = voices.find(v => v.lang === targetLangTag || v.lang.replace('_', '-').startsWith(targetLangTag) || v.lang.startsWith(activeLanguage))
+      if (matchedVoice) {
+        utterance.voice = matchedVoice
+      }
+
+      utterance.rate = 0.95
+      utterance.pitch = 1.0
       window.speechSynthesis.speak(utterance)
     }
   }
 
+  const handleVoiceInput = () => {
+    if (typeof window === 'undefined') return
+    const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition
+    if (!SpeechRecognition) {
+      alert('Speech recognition is not supported in this browser. Please use Google Chrome or Edge.')
+      return
+    }
+
+    if (isListening) {
+      setIsListening(false)
+      return
+    }
+
+    try {
+      const recognition = new SpeechRecognition()
+      const langSpeechCodeMap = {
+        en: 'en-IN',
+        hi: 'hi-IN',
+        te: 'te-IN',
+        ta: 'ta-IN',
+        kn: 'kn-IN',
+        ml: 'ml-IN',
+        mr: 'mr-IN',
+        bn: 'bn-IN',
+        gu: 'gu-IN',
+        pa: 'pa-IN',
+        or: 'or-IN',
+        as: 'as-IN'
+      }
+      recognition.lang = langSpeechCodeMap[activeLanguage] || 'en-IN'
+      recognition.interimResults = false
+      recognition.maxAlternatives = 1
+
+      setIsListening(true)
+
+      recognition.onresult = (event) => {
+        const transcript = event.results[0][0].transcript
+        setInputMessage(transcript)
+        setIsListening(false)
+      }
+
+      recognition.onerror = (event) => {
+        console.error('Speech recognition error:', event.error)
+        setIsListening(false)
+      }
+
+      recognition.onend = () => {
+        setIsListening(false)
+      }
+
+      recognition.start()
+    } catch (e) {
+      console.error('Speech recognition init error:', e)
+      setIsListening(false)
+    }
+  }
+
   const clearChat = () => {
+    if (typeof window !== 'undefined' && 'speechSynthesis' in window) {
+      window.speechSynthesis.cancel()
+    }
     setMessages([
       {
         id: 'welcome_' + Date.now(),
@@ -329,6 +424,23 @@ CRITICAL LANGUAGE RULE: You MUST write your ENTIRE response strictly in ${target
 
               {/* Window Controls */}
               <div className="flex items-center gap-1.5">
+                <button
+                  onClick={() => {
+                    const next = !autoSpeak
+                    setAutoSpeak(next)
+                    if (!next && typeof window !== 'undefined' && 'speechSynthesis' in window) {
+                      window.speechSynthesis.cancel()
+                    }
+                  }}
+                  title={autoSpeak ? 'Auto Voice Speech: ON (Click to Mute)' : 'Auto Voice Speech: OFF (Click to Enable)'}
+                  className={`p-2 rounded-xl transition-all cursor-pointer flex items-center gap-1 ${
+                    autoSpeak
+                      ? 'bg-saffron/20 text-saffron border border-saffron/40 font-bold'
+                      : isLight ? 'hover:bg-slate-200 text-slate-500' : 'hover:bg-slate-800 text-slate-400'
+                  }`}
+                >
+                  {autoSpeak ? <Volume2 className="w-4 h-4 text-saffron animate-pulse" /> : <VolumeX className="w-4 h-4" />}
+                </button>
                 <button
                   onClick={clearChat}
                   title="Clear Chat"
@@ -519,6 +631,21 @@ CRITICAL LANGUAGE RULE: You MUST write your ENTIRE response strictly in ${target
                     : 'bg-slate-900 border-slate-800 text-white placeholder:text-slate-500'
                 }`}
               />
+
+              <button
+                onClick={handleVoiceInput}
+                type="button"
+                title={isListening ? 'Listening... Speak now' : 'Voice Input in Selected Language'}
+                className={`p-3 rounded-2xl font-bold flex items-center justify-center transition-all cursor-pointer ${
+                  isListening
+                    ? 'bg-rose-500 text-white animate-pulse shadow-lg shadow-rose-500/30 ring-2 ring-rose-300'
+                    : isLight
+                    ? 'bg-slate-100 hover:bg-slate-200 text-slate-700 border border-slate-200'
+                    : 'bg-slate-900 hover:bg-slate-800 text-slate-300 border border-slate-800'
+                }`}
+              >
+                {isListening ? <MicOff className="w-4 h-4 text-white animate-bounce" /> : <Mic className="w-4 h-4 text-cyan-400" />}
+              </button>
 
               <button
                 onClick={() => handleSendMessage()}
