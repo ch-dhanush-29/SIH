@@ -27,6 +27,8 @@ export default function MediKioskChatbot({ theme = 'dark', activeView = 'overvie
 
   const messagesEndRef = useRef(null)
   const inputRef = useRef(null)
+  const currentAudioRef = useRef(null)
+  const [isSpeaking, setIsSpeaking] = useState(false)
 
   const scrollToBottom = () => {
     messagesEndRef.current?.scrollIntoView({ behavior: 'smooth' })
@@ -244,40 +246,143 @@ CRITICAL LANGUAGE RULE: You MUST write your ENTIRE response strictly in ${target
     }
   }
 
-  const handleSpeakText = (text) => {
+  const stopSpeech = () => {
+    if (currentAudioRef.current) {
+      try {
+        currentAudioRef.current.pause()
+        currentAudioRef.current.currentTime = 0
+      } catch (e) {}
+      currentAudioRef.current = null
+    }
     if (typeof window !== 'undefined' && 'speechSynthesis' in window) {
-      window.speechSynthesis.cancel()
-      const cleanText = text.replace(/[*_#`]/g, '').trim()
-      const utterance = new SpeechSynthesisUtterance(cleanText.substring(0, 400))
-      
-      const langSpeechCodeMap = {
-        en: 'en-IN',
-        hi: 'hi-IN',
-        te: 'te-IN',
-        ta: 'ta-IN',
-        kn: 'kn-IN',
-        ml: 'ml-IN',
-        mr: 'mr-IN',
-        bn: 'bn-IN',
-        gu: 'gu-IN',
-        pa: 'pa-IN',
-        or: 'or-IN',
-        as: 'as-IN'
+      try {
+        window.speechSynthesis.cancel()
+      } catch (e) {}
+    }
+    setIsSpeaking(false)
+  }
+
+  const handleSpeakText = async (text) => {
+    if (!text || typeof window === 'undefined') return
+    stopSpeech()
+    setIsSpeaking(true)
+
+    const cleanText = text
+      .replace(/[*_#`~>\[\]\(\)]/g, '')
+      .replace(/\n+/g, ' ')
+      .trim()
+      .substring(0, 350)
+
+    const targetLang = activeLanguage || 'en'
+
+    // Tier 1: Try Local Backend IndicTTS endpoint (/api/speech/tts)
+    try {
+      const controller = new AbortController()
+      const timeoutId = setTimeout(() => controller.abort(), 4000)
+
+      const res = await fetch('/api/speech/tts', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ text: cleanText, language: targetLang }),
+        signal: controller.signal
+      })
+      clearTimeout(timeoutId)
+
+      if (res.ok) {
+        const data = await res.json()
+        if (data.audio_base64) {
+          const audio = new Audio(data.audio_base64)
+          audio.playbackRate = 1.05
+          audio.onended = () => setIsSpeaking(false)
+          audio.onerror = () => setIsSpeaking(false)
+          currentAudioRef.current = audio
+          await audio.play()
+          return
+        }
       }
+    } catch (backendTtsErr) {
+      // Continue to next tier
+    }
 
-      const targetLangTag = langSpeechCodeMap[activeLanguage] || 'en-IN'
-      utterance.lang = targetLangTag
-
-      // Dynamically select best matching voice if available in browser
-      const voices = window.speechSynthesis.getVoices() || []
-      const matchedVoice = voices.find(v => v.lang === targetLangTag || v.lang.replace('_', '-').startsWith(targetLangTag) || v.lang.startsWith(activeLanguage))
-      if (matchedVoice) {
-        utterance.voice = matchedVoice
+    // Tier 2: Direct High-Fidelity Indic Neural TTS Audio Stream (Google TTS Engine)
+    try {
+      const ttsLangMap = {
+        hi: 'hi',
+        te: 'te',
+        ta: 'ta',
+        bn: 'bn',
+        mr: 'mr',
+        kn: 'kn',
+        gu: 'gu',
+        ml: 'ml',
+        pa: 'pa',
+        or: 'or',
+        as: 'bn',
+        en: 'en'
       }
+      const ttsLangCode = ttsLangMap[targetLang] || 'en'
+      const audioUrl = `https://translate.google.com/translate_tts?ie=UTF-8&q=${encodeURIComponent(cleanText.substring(0, 200))}&tl=${ttsLangCode}&client=tw-ob`
+      const directAudio = new Audio(audioUrl)
+      directAudio.playbackRate = 1.0
+      directAudio.onended = () => setIsSpeaking(false)
+      directAudio.onerror = () => {
+        // Fallback to Tier 3
+        playBrowserSpeech(cleanText, targetLang)
+      }
+      currentAudioRef.current = directAudio
+      await directAudio.play()
+      return
+    } catch (directAudioErr) {
+      // Continue to Tier 3
+    }
 
-      utterance.rate = 0.95
-      utterance.pitch = 1.0
-      window.speechSynthesis.speak(utterance)
+    // Tier 3: Browser Web Speech Synthesis Fallback
+    playBrowserSpeech(cleanText, targetLang)
+  }
+
+  const playBrowserSpeech = (cleanText, targetLang) => {
+    if (typeof window !== 'undefined' && 'speechSynthesis' in window) {
+      try {
+        window.speechSynthesis.cancel()
+        window.speechSynthesis.resume()
+        const utterance = new SpeechSynthesisUtterance(cleanText)
+
+        const langSpeechCodeMap = {
+          en: 'en-IN',
+          hi: 'hi-IN',
+          te: 'te-IN',
+          ta: 'ta-IN',
+          kn: 'kn-IN',
+          ml: 'ml-IN',
+          mr: 'mr-IN',
+          bn: 'bn-IN',
+          gu: 'gu-IN',
+          pa: 'pa-IN',
+          or: 'or-IN',
+          as: 'as-IN'
+        }
+
+        const targetLangTag = langSpeechCodeMap[targetLang] || 'en-IN'
+        utterance.lang = targetLangTag
+
+        const voices = window.speechSynthesis.getVoices() || []
+        const matchedVoice = voices.find(
+          v => v.lang === targetLangTag || v.lang.replace('_', '-').startsWith(targetLangTag) || v.lang.startsWith(targetLang)
+        )
+        if (matchedVoice) {
+          utterance.voice = matchedVoice
+        }
+
+        utterance.rate = 0.95
+        utterance.pitch = 1.0
+        utterance.onend = () => setIsSpeaking(false)
+        utterance.onerror = () => setIsSpeaking(false)
+        window.speechSynthesis.speak(utterance)
+      } catch (e) {
+        setIsSpeaking(false)
+      }
+    } else {
+      setIsSpeaking(false)
     }
   }
 
