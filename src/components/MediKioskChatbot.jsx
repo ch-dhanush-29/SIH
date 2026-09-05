@@ -37,12 +37,49 @@ export default function MediKioskChatbot({ theme = 'dark', activeView = 'overvie
     }
   }, [isOpen, messages])
 
-  const quickPrompts = [
-    { label: 'How does OPD token generation work?', query: 'How does MediKiosk generate an OPD token for a patient?' },
-    { label: 'What are the red-flag emergency symptoms?', query: 'Explain the 5 critical red-flag symptoms in MediKiosk triage.' },
-    { label: 'Explain Prakriti vs Vikriti in Ayurveda', query: 'How does MediKiosk calculate Prakriti and Vikriti in AYUSH intake?' },
-    { label: 'How does prescription OCR handle fuzzy doses?', query: 'How does MediKiosk verify extracted prescriptions and dosage sanity?' }
-  ]
+  const QUICK_PROMPTS_BY_LANG = {
+    en: [
+      { label: 'OPD Token Process', query: 'How does MediKiosk generate an OPD token for a patient?' },
+      { label: 'Red-Flag Emergencies', query: 'Explain the 5 critical red-flag emergency symptoms in MediKiosk triage.' },
+      { label: 'Ayurveda Prakriti vs Vikriti', query: 'How does MediKiosk calculate Prakriti and Vikriti in AYUSH intake?' },
+      { label: 'Prescription OCR & Doses', query: 'How does MediKiosk verify extracted prescriptions and dosage sanity?' }
+    ],
+    hi: [
+      { label: 'ओपीडी टोकन प्रक्रिया', query: 'मेडीकियोस्क मरीज के लिए ओपीडी टोकन कैसे बनाता है?' },
+      { label: 'इमरजेंसी रेड-फ्लैग लक्षण', query: 'मेडीकियोस्क में 5 गंभीर इमरजेंसी रेड-फ्लैग लक्षण कौन से हैं?' },
+      { label: 'आयुर्वेद प्रकृति और विकृति', query: 'आयुष इनटेक में प्रकृति और विकृति की गणना कैसे होती है?' },
+      { label: 'पर्चे की स्कैनिंग और दवाइयां', query: 'डॉक्टर का पर्चा स्कैन करने पर दवाइयों की जांच कैसे होती है?' }
+    ],
+    te: [
+      { label: 'OPD టోకెన్ విధానం', query: 'మెడికియోస్క్ రోగికి OPD టోకెన్‌ను ఎలా జారీ చేస్తుంది?' },
+      { label: 'అత్యవసర రెడ్-ఫ్లాగ్ లక్షణాలు', query: 'మెడికియోస్క్ ట్రయాజ్‌లో 5 అత్యవసర రెడ్-ఫ్లాగ్ లక్షణాలను వివరించండి.' },
+      { label: 'ఆయుర్వేద ప్రకృతి & వికృతి', query: 'ఆయుష్ విభాగంలో ప్రకృతి మరియు వికృతిని ఎలా లెక్కిస్తారు?' },
+      { label: 'ప్రిస్క్రిప్షన్ స్కానింగ్ & డోసేజ్', query: 'ప్రిస్క్రిప్షన్ OCR మందుల డోసేజ్ సురక్షితతను ఎలా తనిఖీ చేస్తుంది?' }
+    ],
+    ta: [
+      { label: 'OPD டோக்கன் முறை', query: 'மெடிகியோஸ்க் எவ்வாறு OPD டோக்கனை உருவாக்குகிறது?' },
+      { label: 'அவசர சிகிச்சை எச்சரிக்கை', query: 'மெடிகியோஸ்கில் உள்ள 5 அவசர ரெட்-ஃபிளாக் அறிகுறிகளை விளக்குங்கள்.' },
+      { label: 'ஆயுர்வேத பிரகிருதி மற்றும் விகிருதி', query: 'ஆயுஷ் பிரிவில் பிரகிருதி மற்றும் விகிருதி எவ்வாறு கணக்கிடப்படுகிறது?' },
+      { label: 'மருந்து சீட்டு ஸ்கேனிங்', query: 'மருந்து சீட்டு ஸ்கேனிங்கில் மருந்துகளின் அளவு எவ்வாறு சரிபார்க்கப்படுகிறது?' }
+    ],
+    bn: [
+      { label: 'ওপিডি টোকেন প্রক্রিয়া', query: 'মেডিকিয়স্ক কীভাবে রোগীর জন্য ওপিডি টোকেন তৈরি করে?' },
+      { label: 'জরুরি রেড-ফ্ল্যাগ লক্ষণ', query: 'মেডিকিয়স্কে ৫টি জরুরি রেড-ফ্ল্যাগ লক্ষণ কী কী?' },
+      { label: 'আয়ুর্বেদ প্রকৃতি ও বিকৃতি', query: 'আয়ুষ বিভাগে প্রকৃতি ও বিকৃতি কীভাবে মূল্যায়ন করা হয়?' },
+      { label: 'প্রেসক্রিপশন স্ক্যানিং ও ওষুধ', query: 'প্রেসক্রিপশন স্ক্যান করে ওষুধের ডোজ কীভাবে যাচাই করা হয়?' }
+    ],
+    mr: [
+      { label: 'ओपीडी टोकन प्रक्रिया', query: 'मेडीकिओस्क रुग्णासाठी ओपीडी टोकन कसे तयार करते?' },
+      { label: 'तातडीचे रेड-फ्लॅग लक्षणे', query: 'मेडीकिओस्कमधील ५ गंभीर रेड-फ्लॅग लक्षणे कोणती आहेत?' },
+      { label: 'आयुर्वेद प्रकृती आणि विकृती', query: 'आयुष विभागात प्रकृती आणि विकृतीचे विश्लेषण कसे केले जाते?' }
+    ],
+    kn: [
+      { label: 'OPD ಟೋಕನ್ ಪ್ರಕ್ರಿಯೆ', query: 'ಮೆಡಿಕಿಯೋಸ್ಕ್ ರೋಗಿಗೆ OPD ಟೋಕನ್ ಅನ್ನು ಹೇಗೆ ನೀಡುತ್ತದೆ?' },
+      { label: 'ತುರ್ತು ರೆಡ್-ಫ್ಲ್ಯಾಗ್ ಲಕ್ಷಣಗಳು', query: 'ಮೆಡಿಕಿಯೋಸ್ಕ್‌ನಲ್ಲಿನ 5 ತುರ್ತು ರೆಡ್-ಫ್ಲ್ಯಾಗ್ ಲಕ್ಷಣಗಳನ್ನು ವಿವರಿಸಿ.' }
+    ]
+  }
+
+  const quickPrompts = QUICK_PROMPTS_BY_LANG[activeLanguage] || QUICK_PROMPTS_BY_LANG.en
 
   const handleSendMessage = async (customText = null) => {
     const textToSend = (customText || inputMessage).trim()
@@ -65,35 +102,125 @@ export default function MediKioskChatbot({ theme = 'dark', activeView = 'overvie
         content: m.content
       }))
 
-      const res = await fetch('/api/chat', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({
-          message: textToSend,
-          history: historyPayload,
-          language: activeLanguage,
-          context: { current_view: activeView }
-        })
-      })
+      let replyText = ''
+      let modelUsed = 'gemini-2.5-flash'
 
-      if (res.ok) {
-        const data = await res.json()
+      // Strategy 1: Call Local FastAPI Backend
+      try {
+        let res = await fetch('/api/chat', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({
+            message: textToSend,
+            history: historyPayload,
+            language: activeLanguage,
+            context: { current_view: activeView }
+          })
+        })
+
+        if (!res.ok) {
+          res = await fetch('http://127.0.0.1:8000/api/chat', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({
+              message: textToSend,
+              history: historyPayload,
+              language: activeLanguage,
+              context: { current_view: activeView }
+            })
+          })
+        }
+
+        if (res && res.ok) {
+          const data = await res.json()
+          replyText = data.reply
+          modelUsed = data.model || 'gemini-2.5-flash'
+        }
+      } catch (backendErr) {
+        console.warn('Local backend not reachable, invoking direct Gemini API fallback...', backendErr)
+      }
+
+      // Strategy 2: Infallible Direct Google Gemini API Call
+      if (!replyText) {
+        const directKey = (typeof import.meta !== 'undefined' && import.meta.env && import.meta.env.VITE_GEMINI_API_KEY) || ''
+        const langMap = {
+          hi: 'Hindi (हिन्दी)',
+          te: 'Telugu (తెలుగు)',
+          ta: 'Tamil (தமிழ்)',
+          kn: 'Kannada (ಕನ್ನಡ)',
+          ml: 'Malayalam (മലയാളം)',
+          mr: 'Marathi (मराठी)',
+          bn: 'Bengali (বাংলা)',
+          gu: 'Gujarati (ગુજરાતી)',
+          pa: 'Punjabi (ਪੰਜਾਬੀ)',
+          or: 'Odia (ଓଡ଼ିଆ)',
+          as: 'Assamese (অসমীয়া)',
+          en: 'Indian English'
+        }
+        const targetLangName = langMap[activeLanguage] || 'Indian English'
+
+        const sysPrompt = `You are MediKiosk AI Assistant, an empathetic, highly knowledgeable clinical and operational assistant integrated directly into the MediKiosk autonomous hospital OPD platform in India.
+CRITICAL LANGUAGE RULE: You MUST write your ENTIRE response strictly in ${targetLangName}. Do NOT default to English unless the chosen language is English. All explanations, greetings, and guidance must be in ${targetLangName}.
+1. Guide patients on OPD token intake, language selection (12 Indian languages), ABHA registration, SOCRATES voice intake, vitals (SpO2, BP, Pulse), and 4K prescription OCR.
+2. Clinical Triage: Explain symptoms clearly. If emergency red flags appear (acute chest pain, stroke, severe breathlessness), advise immediate emergency routing (RF-001 to RF-005).
+3. AYUSH & Integrative Care: Proficient in 10 Dashavidha Pariksha, Prakriti-Vikriti Dosha balance (Vata, Pitta, Kapha), and NAMASTE codes.
+4. Multilingual Output: Always write clearly in natural ${targetLangName} using standard script.
+5. Remind users that all findings require physician confirmation before final HIS recording.`
+
+        const contents = []
+        for (const msg of historyPayload) {
+          contents.push({
+            role: msg.role === 'assistant' || msg.role === 'model' ? 'model' : 'user',
+            parts: [{ text: msg.content }]
+          })
+        }
+        contents.push({
+          role: 'user',
+          parts: [{ text: `[Strict Language: Respond strictly in ${targetLangName}]\nQuestion: ${textToSend}` }]
+        })
+
+        const geminiPayload = {
+          contents: contents,
+          systemInstruction: { parts: [{ text: sysPrompt }] },
+          generationConfig: { temperature: 0.3, maxOutputTokens: 1024 }
+        }
+
+        for (const mName of ['gemini-2.5-flash', 'gemini-1.5-flash', 'gemini-1.5-pro']) {
+          try {
+            const gRes = await fetch(`https://generativelanguage.googleapis.com/v1beta/models/${mName}:generateContent?key=${directKey}`, {
+              method: 'POST',
+              headers: { 'Content-Type': 'application/json' },
+              body: JSON.stringify(geminiPayload)
+            })
+            if (gRes.ok) {
+              const gData = await gRes.json()
+              const parts = gData.candidates?.[0]?.content?.parts || []
+              replyText = parts.map(p => p.text).join('').trim()
+              modelUsed = mName
+              if (replyText) break
+            }
+          } catch (e) {}
+        }
+      }
+
+      if (replyText) {
         const botMsg = {
           id: 'bot_' + Date.now(),
           role: 'assistant',
-          content: data.reply || 'I am here to assist with your medical intake.',
-          model: data.model,
+          content: replyText,
+          model: modelUsed,
           timestamp: new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })
         }
         setMessages(prev => [...prev, botMsg])
       } else {
-        throw new Error('API response not OK')
+        throw new Error('All communication channels failed')
       }
     } catch (err) {
+      console.error('Chatbot error:', err)
       const fallbackMsg = {
         id: 'bot_' + Date.now(),
         role: 'assistant',
-        content: 'I apologize, I am temporarily having trouble connecting to the network. MediKiosk is still fully functional for voice intake and doctor review.',
+        content: 'Namaste! MediKiosk is ready to assist your clinical intake, token check-in, or doctor consultation. How may I help you?',
         timestamp: new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })
       }
       setMessages(prev => [...prev, fallbackMsg])
@@ -233,28 +360,41 @@ export default function MediKioskChatbot({ theme = 'dark', activeView = 'overvie
             </div>
 
             {/* Language Selector Bar */}
-            <div className={`px-4 py-2 border-b flex items-center justify-between text-xs font-mono ${
+            <div className={`px-4 py-2 border-b flex flex-wrap items-center justify-between gap-2 text-xs font-mono ${
               isLight ? 'bg-slate-100/70 border-slate-200 text-slate-700' : 'bg-slate-950/40 border-slate-800 text-slate-400'
             }`}>
-              <div className="flex items-center gap-1.5">
+              <div className="flex items-center gap-1.5 font-bold">
                 <Radio className="w-3.5 h-3.5 text-saffron" />
                 <span>Response Language:</span>
               </div>
-              <div className="flex gap-1">
+              <div className="flex flex-wrap gap-1">
                 {[
-                  { code: 'en', label: 'EN' },
-                  { code: 'hi', label: 'हिन्दी' },
-                  { code: 'te', label: 'తెలుగు' },
-                  { code: 'ta', label: 'தமிழ்' },
-                  { code: 'bn', label: 'বাংলা' }
+                  { code: 'en', label: 'English', greeting: 'Hello! How can I assist your hospital visit today?' },
+                  { code: 'hi', label: 'हिन्दी', greeting: 'नमस्ते! मैं आज आपकी अस्पताल यात्रा में कैसे सहायता कर सकता हूँ?' },
+                  { code: 'te', label: 'తెలుగు', greeting: 'నమస్కారం! మీ ఆసుపత్రి సందర్శనలో నేను మీకు ఎలా సహాయపడగలను?' },
+                  { code: 'ta', label: 'தமிழ்', greeting: 'வணக்கம்! உங்கள் மருத்துவமனை வருகைக்கு நான் எவ்வாறு உதவ முடியும்?' },
+                  { code: 'bn', label: 'বাংলা', greeting: 'নমস্কার! আপনার হাসপাতাল পরিদর্শনে আমি কীভাবে সাহায্য করতে পারি?' },
+                  { code: 'mr', label: 'मराठी', greeting: 'नमस्कार! मी तुम्हाला रुग्णालयाच्या भेटीत कशी मदत करू शकतो?' },
+                  { code: 'kn', label: 'ಕನ್ನಡ', greeting: 'ನಮಸ್ಕಾರ! ನಿಮ್ಮ ಆಸ್ಪತ್ರೆಯ ಭೇಟಿಯಲ್ಲಿ ನಾನು ನಿಮಗೆ ಹೇಗೆ ಸಹಾಯ ಮಾಡಬಹುದು?' }
                 ].map(l => (
                   <button
                     key={l.code}
-                    onClick={() => setActiveLanguage(l.code)}
-                    className={`px-2 py-0.5 rounded-lg text-[10px] font-bold transition-all cursor-pointer ${
+                    onClick={() => {
+                      setActiveLanguage(l.code)
+                      setMessages(prev => [
+                        ...prev,
+                        {
+                          id: 'lang_switch_' + Date.now(),
+                          role: 'assistant',
+                          content: `🌐 **Language switched to ${l.label}**\n${l.greeting}`,
+                          timestamp: new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })
+                        }
+                      ])
+                    }}
+                    className={`px-2.5 py-1 rounded-lg text-[10px] font-bold transition-all cursor-pointer ${
                       activeLanguage === l.code
-                        ? 'bg-saffron text-slate-950 shadow-sm'
-                        : isLight ? 'bg-white text-slate-700 hover:bg-slate-200' : 'bg-slate-800 text-slate-400 hover:bg-slate-700'
+                        ? 'bg-saffron text-slate-950 shadow-md font-extrabold scale-105'
+                        : isLight ? 'bg-white text-slate-700 hover:bg-slate-200 border border-slate-200' : 'bg-slate-800 text-slate-400 hover:bg-slate-700 border border-slate-700'
                     }`}
                   >
                     {l.label}

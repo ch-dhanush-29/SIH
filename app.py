@@ -57,7 +57,17 @@ from medikiosk.database import (
     get_mongo_connection_uri
 )
 
+from fastapi.middleware.cors import CORSMiddleware
+
 app = FastAPI(title="MediKiosk Clinical History Intake Platform", version="1.0.0")
+
+app.add_middleware(
+    CORSMiddleware,
+    allow_origins=["*"],
+    allow_credentials=True,
+    allow_methods=["*"],
+    allow_headers=["*"],
+)
 
 # Security infrastructure singletons
 _crypto_vault = CryptoVault()
@@ -2106,9 +2116,27 @@ async def handle_gemini_chatbot(req: ChatRequest):
     if not gemini_key:
         raise HTTPException(status_code=500, detail="GEMINI_API_KEY environment variable is not configured in .env.")
 
+    LANG_MAP = {
+        "hi": "Hindi (हिन्दी)",
+        "te": "Telugu (తెలుగు)",
+        "ta": "Tamil (தமிழ்)",
+        "kn": "Kannada (ಕನ್ನಡ)",
+        "ml": "Malayalam (മലയാളം)",
+        "mr": "Marathi (मराठी)",
+        "bn": "Bengali (বাংলা)",
+        "gu": "Gujarati (ગુજરાતી)",
+        "pa": "Punjabi (ਪੰਜਾਬੀ)",
+        "or": "Odia (ଓଡ଼ିଆ)",
+        "as": "Assamese (অসমীয়া)",
+        "en": "Indian English"
+    }
+    target_lang_name = LANG_MAP.get(req.language, "Indian English")
+
     system_instruction = (
         "You are MediKiosk AI Assistant, an empathetic, highly knowledgeable clinical and operational assistant "
         "integrated directly into the MediKiosk autonomous hospital OPD platform in India.\n\n"
+        f"CRITICAL LANGUAGE RULE: You MUST write your ENTIRE response strictly in {target_lang_name}. "
+        f"Do NOT default to English unless the chosen language is English. All explanations, greetings, and advice must be in {target_lang_name}.\n\n"
         "Your capabilities and knowledge include:\n"
         "1. Kiosk Workflow: Guide patients through language selection (12 Indian languages), DPDP-compliant consent, "
         "ABHA health ID scan/registration, SOCRATES voice intake, vitals telemetry (SpO2, BP, Pulse), 4K prescription OCR, "
@@ -2119,8 +2147,7 @@ async def handle_gemini_chatbot(req: ChatRequest):
         "NAMASTE codes, and traditional formulation guidance (Churna, Vati, Kwatha).\n"
         "4. Prescription Intelligence: Explain medication schedules (OD, BD, TDS, HS, SOS), ICMR reference lab ranges (HbA1c, FBS, Creatinine), "
         "and potential drug interactions with utmost safety.\n"
-        "5. Multilingual & Patient-Friendly: Respond in the user's preferred language (Hindi, English, Tamil, Telugu, Bengali, Marathi, etc.). "
-        "Keep answers concise, warm, professional, and clear with helpful markdown formatting.\n"
+        f"5. Multilingual Output: Always write clearly in natural {target_lang_name} using standard script.\n"
         "6. Safety Confirmation Gate: Remind users that all medical findings require physician confirmation before final HIS recording."
     )
 
@@ -2134,10 +2161,12 @@ async def handle_gemini_chatbot(req: ChatRequest):
                 "parts": [{"text": msg.content}]
             })
 
-    # Add current message
+    # Add current message with explicit language reinforcement
     current_prompt = req.message
     if req.context:
-        current_prompt = f"[Context: {json.dumps(req.context)}]\nUser Question: {req.message}"
+        current_prompt = f"[Context: {json.dumps(req.context)}]\n[Strict Language: Respond in {target_lang_name}]\nUser Question: {req.message}"
+    else:
+        current_prompt = f"[Strict Language: Respond in {target_lang_name}]\nUser Question: {req.message}"
     
     contents.append({
         "role": "user",
@@ -2150,7 +2179,7 @@ async def handle_gemini_chatbot(req: ChatRequest):
             "parts": [{"text": system_instruction}]
         },
         "generationConfig": {
-            "temperature": 0.4,
+            "temperature": 0.3,
             "maxOutputTokens": 1024,
             "topP": 0.95
         }
