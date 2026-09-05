@@ -2083,6 +2083,112 @@ def get_pilot_fleet_telemetry():
         "recent_audit_events": audit_trail[-5:]
     }
 
+class ChatMessage(BaseModel):
+    role: str
+    content: str
+
+class ChatRequest(BaseModel):
+    message: str
+    history: Optional[List[ChatMessage]] = []
+    language: Optional[str] = "en"
+    context: Optional[Dict[str, Any]] = None
+
+@app.post("/api/chat")
+async def handle_gemini_chatbot(req: ChatRequest):
+    """
+    Real-time intelligent conversational assistant for MediKiosk powered by Google Gemini.
+    Answers patient questions, explains OPD intake steps, triages complaints, explains lab test ranges,
+    and guides users through ABHA registration, AYUSH assessment, and prescription OCR.
+    """
+    import requests
+
+    gemini_key = os.environ.get("GEMINI_API_KEY", "")
+    if not gemini_key:
+        raise HTTPException(status_code=500, detail="GEMINI_API_KEY environment variable is not configured in .env.")
+
+    system_instruction = (
+        "You are MediKiosk AI Assistant, an empathetic, highly knowledgeable clinical and operational assistant "
+        "integrated directly into the MediKiosk autonomous hospital OPD platform in India.\n\n"
+        "Your capabilities and knowledge include:\n"
+        "1. Kiosk Workflow: Guide patients through language selection (12 Indian languages), DPDP-compliant consent, "
+        "ABHA health ID scan/registration, SOCRATES voice intake, vitals telemetry (SpO2, BP, Pulse), 4K prescription OCR, "
+        "and OPD token generation (e.g. Room 104).\n"
+        "2. Clinical Triage & Red Flags: Explain symptoms clearly. If emergency red flags appear (acute crushing chest pain, "
+        "sudden unilateral weakness/facial droop, severe dyspnea, anaphylaxis), advise immediate emergency routing (RF-001 to RF-005).\n"
+        "3. AYUSH & Integrative Care: Proficient in 10 Dashavidha Pariksha, Prakriti-Vikriti Dosha balance (Vata, Pitta, Kapha), "
+        "NAMASTE codes, and traditional formulation guidance (Churna, Vati, Kwatha).\n"
+        "4. Prescription Intelligence: Explain medication schedules (OD, BD, TDS, HS, SOS), ICMR reference lab ranges (HbA1c, FBS, Creatinine), "
+        "and potential drug interactions with utmost safety.\n"
+        "5. Multilingual & Patient-Friendly: Respond in the user's preferred language (Hindi, English, Tamil, Telugu, Bengali, Marathi, etc.). "
+        "Keep answers concise, warm, professional, and clear with helpful markdown formatting.\n"
+        "6. Safety Confirmation Gate: Remind users that all medical findings require physician confirmation before final HIS recording."
+    )
+
+    contents = []
+    # Add history
+    if req.history:
+        for msg in req.history[-6:]:
+            role = "user" if msg.role in ["user", "patient"] else "model"
+            contents.append({
+                "role": role,
+                "parts": [{"text": msg.content}]
+            })
+
+    # Add current message
+    current_prompt = req.message
+    if req.context:
+        current_prompt = f"[Context: {json.dumps(req.context)}]\nUser Question: {req.message}"
+    
+    contents.append({
+        "role": "user",
+        "parts": [{"text": current_prompt}]
+    })
+
+    payload = {
+        "contents": contents,
+        "systemInstruction": {
+            "parts": [{"text": system_instruction}]
+        },
+        "generationConfig": {
+            "temperature": 0.4,
+            "maxOutputTokens": 1024,
+            "topP": 0.95
+        }
+    }
+
+    models_to_try = ["gemini-2.5-flash", "gemini-1.5-flash", "gemini-1.5-pro"]
+    for model_name in models_to_try:
+        url = f"https://generativelanguage.googleapis.com/v1beta/models/{model_name}:generateContent?key={gemini_key}"
+        try:
+            resp = requests.post(url, json=payload, headers={"Content-Type": "application/json"}, timeout=20)
+            if resp.status_code == 200:
+                data = resp.json()
+                text = ""
+                candidates = data.get("candidates", [])
+                if candidates:
+                    parts = candidates[0].get("content", {}).get("parts", [])
+                    text = "".join(p.get("text", "") for p in parts)
+                
+                if text:
+                    return {
+                        "reply": text.strip(),
+                        "model": model_name,
+                        "status": "SUCCESS"
+                    }
+        except Exception as e:
+            continue
+
+    # Graceful fallback response if external API is unreachable
+    return {
+        "reply": (
+            "Hello! I am MediKiosk Assistant. I can help guide you through OPD token registration, "
+            "explain your symptoms or prescriptions, check lab ranges, and help with ABHA or AYUSH assessments. "
+            "How may I assist you today?"
+        ),
+        "model": "local-fallback",
+        "status": "FALLBACK"
+    }
+
 @app.post("/api/pilot/reset-queue")
 def reset_demo_opd_queue():
     """
@@ -2091,6 +2197,3 @@ def reset_demo_opd_queue():
     session_state["opd_token_counter"] = 89
     session_state["opd_queue"] = copy.deepcopy(INITIAL_OPD_QUEUE) if 'INITIAL_OPD_QUEUE' in globals() else []
     return {"status": "QUEUE_RESET_SUCCESS", "queue_count": len(session_state["opd_queue"])}
-
-
-

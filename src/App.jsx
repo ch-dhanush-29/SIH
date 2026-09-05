@@ -15,6 +15,7 @@ import MainShowcaseView from './components/views/MainShowcaseView.jsx'
 import PatientKioskView from './components/views/PatientKioskView.jsx'
 import DoctorDashboardView from './components/views/DoctorDashboardView.jsx'
 import PilotDeploymentView from './components/views/PilotDeploymentView.jsx'
+import MediKioskChatbot from './components/MediKioskChatbot.jsx'
 
 export default function App() {
   const webGLSupported = useWebGLSupport()
@@ -135,6 +136,9 @@ export default function App() {
       {activeView === 'pilot' && (
         <PilotDeploymentView theme={theme} />
       )}
+
+      {/* Real-Time Gemini Clinical AI Chatbot */}
+      <MediKioskChatbot theme={theme} activeView={activeView} />
     </div>
   )
 }

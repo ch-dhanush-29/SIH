@@ -99,3 +99,8 @@ timestamp,session_id,patient_id,consent_type,action,purpose
 2026-09-04 22:22:11,sess_fail_01,P_FAIL,GRANT_DOCUMENT_SCAN,SUCCESS,Scan docs
 2026-09-04 22:22:11,sess_fail_01,P_FAIL,REVOKE_DOCUMENT_SCAN,SUCCESS,Patient changed mind on documents
 2026-09-04 22:22:11,sess_fail_01,P_FAIL,SESSION_PURGE,SUCCESS,Purging session details from memory (DPDP requirement)
+2026-09-05 21:03:43,sess_fail_01,P_FAIL,SESSION_START,SUCCESS,Initiate new clinical intake session
+2026-09-05 21:03:43,sess_fail_01,P_FAIL,GRANT_VOICE_INTAKE,SUCCESS,Voice intake
+2026-09-05 21:03:43,sess_fail_01,P_FAIL,GRANT_DOCUMENT_SCAN,SUCCESS,Scan docs
+2026-09-05 21:03:43,sess_fail_01,P_FAIL,REVOKE_DOCUMENT_SCAN,SUCCESS,Patient changed mind on documents
+2026-09-05 21:03:43,sess_fail_01,P_FAIL,SESSION_PURGE,SUCCESS,Purging session details from memory (DPDP requirement)
