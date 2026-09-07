@@ -59,7 +59,8 @@ const HARDWARE_PERIPHERALS = [
   },
 ];
 
-export default function PhysicalKioskHardwareSection() {
+export default function PhysicalKioskHardwareSection({ theme = 'dark' }) {
+  const isLight = theme === 'light'
   const [activeTab, setActiveTab] = useState("printer");
   
   // Printer state
@@ -91,22 +92,25 @@ export default function PhysicalKioskHardwareSection() {
   }
 
   return (
-    <section id="hardware-services" className="py-20 bg-gradient-to-b from-slate-950 via-blue-950 to-slate-950 relative overflow-hidden">
-      {/* Background decoration */}
-      <div className="absolute inset-0 pointer-events-none opacity-15"
-        style={{ backgroundImage: "linear-gradient(rgba(56,189,248,.1) 1px, transparent 1px), linear-gradient(90deg, rgba(56,189,248,.1) 1px, transparent 1px)", backgroundSize: "40px 40px" }} />
-
+    <section 
+      id="hardware-services" 
+      className={`py-24 border-b transition-colors relative overflow-hidden ${
+        isLight ? 'bg-slate-50 border-slate-200 text-slate-900' : 'bg-slate-900/40 border-slate-800 text-white'
+      }`}
+    >
       <div className="max-w-6xl mx-auto px-4 relative">
         {/* Section Header */}
         <motion.div initial={{ opacity: 0, y: 30 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true }} className="text-center mb-12">
-          <div className="inline-flex items-center gap-2 bg-blue-500/10 border border-blue-500/30 px-4 py-1.5 rounded-full text-blue-400 text-sm font-medium mb-5">
-            <span className="w-2 h-2 bg-blue-400 rounded-full animate-pulse" />
+          <div className={`inline-flex items-center gap-2 border px-4 py-1.5 rounded-full text-xs font-mono font-bold mb-4 ${
+            isLight ? 'bg-slate-100 border-slate-300 text-slate-800' : 'bg-slate-900 border-slate-800 text-cyan-400'
+          }`}>
+            <span className="w-2 h-2 bg-cyan-400 rounded-full animate-pulse" />
             ESC/POS Printer · NIBP/SpO2 Sensor Hub · 4-Mic DSP Beamforming · 4K Camera
           </div>
-          <h2 className="text-4xl font-bold text-white mb-4">
-            Physical Kiosk Hardware <span className="text-blue-400">&</span> Device Drivers
+          <h2 className="text-3xl sm:text-4xl font-extrabold font-display tracking-tight mb-3">
+            Physical Kiosk Hardware <span className="text-saffron">&</span> Device Drivers
           </h2>
-          <p className="text-slate-400 max-w-2xl mx-auto text-lg">
+          <p className={`max-w-2xl mx-auto text-sm sm:text-base leading-relaxed ${isLight ? 'text-slate-600' : 'text-slate-400'}`}>
             Production-grade drivers for physical OPD kiosk terminals — thermal token printing, digital medical vitals capture, high-noise acoustic beamforming, and anti-tamper telemetry.
           </p>
         </motion.div>
@@ -114,19 +118,28 @@ export default function PhysicalKioskHardwareSection() {
         {/* Peripheral Bus Status Grid */}
         <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-6 gap-3 mb-10">
           {HARDWARE_PERIPHERALS.map((dev) => (
-            <div key={dev.id} className="bg-slate-900/80 border border-slate-700 rounded-xl p-3 text-center">
-              <div className="text-2xl mb-1">{dev.icon}</div>
-              <div className="text-white text-xs font-bold truncate">{dev.name.split(" ")[0]} {dev.name.split(" ")[1]}</div>
-              <div className="flex items-center justify-center gap-1.5 mt-1.5">
-                <span className="w-1.5 h-1.5 bg-emerald-400 rounded-full animate-ping" />
-                <span className="text-emerald-400 text-[10px] font-bold font-mono">ONLINE</span>
+            <div 
+              key={dev.id} 
+              className={`border rounded-2xl p-3.5 text-center transition-all ${
+                isLight 
+                  ? 'bg-white border-slate-200 shadow-sm' 
+                  : 'bg-slate-900/80 border-slate-800'
+              }`}
+            >
+              <div className="text-2xl mb-1.5" aria-hidden="true">{dev.icon}</div>
+              <div className={`text-xs font-bold truncate ${isLight ? 'text-slate-900' : 'text-white'}`}>
+                {dev.name.split(" ")[0]} {dev.name.split(" ")[1]}
+              </div>
+              <div className="flex items-center justify-center gap-1.5 mt-2">
+                <span className="w-1.5 h-1.5 bg-emerald-500 rounded-full animate-ping" />
+                <span className="text-emerald-500 text-[10px] font-bold font-mono">ONLINE</span>
               </div>
             </div>
           ))}
         </div>
 
         {/* Interactive Feature Tabs */}
-        <div className="flex flex-wrap justify-center gap-3 mb-10">
+        <div className="flex flex-wrap justify-center gap-2.5 mb-10">
           {[
             { id: "printer", label: "🖨️ ESC/POS Thermal Token Printer", sub: "OPD Queue Slips & Barcode" },
             { id: "vitals", label: "🩺 Medical Vitals Sensor Hub", sub: "SpO2 · NIBP · IR Temp · BMI" },
@@ -137,14 +150,16 @@ export default function PhysicalKioskHardwareSection() {
             <button
               key={tab.id}
               onClick={() => setActiveTab(tab.id)}
-              className={`px-5 py-3 rounded-xl text-sm font-semibold transition-all duration-200 border ${
+              className={`px-4 sm:px-5 py-3 rounded-2xl text-xs sm:text-sm font-semibold transition-all duration-200 border cursor-pointer ${
                 activeTab === tab.id
-                  ? "bg-blue-500 text-slate-900 border-blue-400 shadow-lg shadow-blue-500/30 font-bold"
-                  : "bg-slate-900/80 text-slate-300 border-slate-700 hover:border-blue-500/50"
+                  ? "bg-saffron text-slate-950 border-saffron shadow-lg shadow-saffron/20 font-bold scale-[1.02]"
+                  : isLight
+                  ? "bg-white text-slate-700 border-slate-200 hover:border-slate-300"
+                  : "bg-slate-900/80 text-slate-300 border-slate-800 hover:border-slate-700"
               }`}
             >
               <div>{tab.label}</div>
-              <div className={`text-xs mt-0.5 ${activeTab === tab.id ? "text-slate-800 font-semibold" : "text-slate-500"}`}>{tab.sub}</div>
+              <div className={`text-[11px] mt-0.5 font-mono ${activeTab === tab.id ? "text-slate-900 font-semibold" : isLight ? "text-slate-500" : "text-slate-500"}`}>{tab.sub}</div>
             </button>
           ))}
         </div>

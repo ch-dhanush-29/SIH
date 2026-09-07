@@ -16,6 +16,7 @@ import PatientKioskView from './components/views/PatientKioskView.jsx'
 import DoctorDashboardView from './components/views/DoctorDashboardView.jsx'
 import PilotDeploymentView from './components/views/PilotDeploymentView.jsx'
 import MediKioskChatbot from './components/MediKioskChatbot.jsx'
+import Watermark from './components/Watermark.jsx'
 
 export default function App() {
   const webGLSupported = useWebGLSupport()
@@ -139,6 +140,9 @@ export default function App() {
 
       {/* Real-Time Gemini Clinical AI Chatbot */}
       <MediKioskChatbot theme={theme} activeView={activeView} />
+
+      {/* Persistent Subtle Fixed Watermark (~12% Opacity, Bottom-Right, Non-Interactive) */}
+      <Watermark theme={theme} />
     </div>
   )
 }

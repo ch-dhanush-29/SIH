@@ -148,7 +148,8 @@ const RBAC_ROLES = [
   },
 ];
 
-export default function SecurityComplianceSection() {
+export default function SecurityComplianceSection({ theme = 'dark' }) {
+  const isLight = theme === 'light'
   const [activeTab, setActiveTab] = useState("ledger");
   const [isVerifying, setIsVerifying] = useState(false);
   const [verificationResult, setVerificationResult] = useState(null);
@@ -199,28 +200,31 @@ export default function SecurityComplianceSection() {
   }
 
   return (
-    <section id="security-compliance" className="py-20 bg-gradient-to-b from-slate-950 via-slate-900 to-slate-950 relative overflow-hidden">
-      {/* Subtle security background mesh */}
-      <div className="absolute inset-0 pointer-events-none opacity-10"
-        style={{ backgroundImage: "radial-gradient(#38bdf8 1px, transparent 1px)", backgroundSize: "32px 32px" }} />
-
+    <section 
+      id="security-compliance" 
+      className={`py-24 border-b transition-colors relative overflow-hidden ${
+        isLight ? 'bg-slate-50 border-slate-200 text-slate-900' : 'bg-slate-900/40 border-slate-800 text-white'
+      }`}
+    >
       <div className="max-w-6xl mx-auto px-4 relative">
         {/* Section Header */}
         <motion.div initial={{ opacity: 0, y: 30 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true }} className="text-center mb-12">
-          <div className="inline-flex items-center gap-2 bg-emerald-500/10 border border-emerald-500/30 px-4 py-1.5 rounded-full text-emerald-400 text-sm font-medium mb-5">
+          <div className={`inline-flex items-center gap-2 border px-4 py-1.5 rounded-full text-xs font-mono font-bold mb-4 ${
+            isLight ? 'bg-emerald-50 border-emerald-200 text-emerald-900' : 'bg-slate-900 border-slate-800 text-emerald-400'
+          }`}>
             <span className="w-2 h-2 bg-emerald-400 rounded-full animate-pulse" />
-            DPDP Act 2023 · ISO 27799 · AES-256 · SHA-256 Ledger
+            DPDP Act 2023 · ISO 27799 / ISO 27001 · AES-256-GCM · Ephemeral Memory
           </div>
-          <h2 className="text-4xl font-bold text-white mb-4">
-            Security, Cryptography <span className="text-emerald-400">&</span> Compliance
+          <h2 className="text-3xl sm:text-4xl font-extrabold font-display tracking-tight mb-3">
+            DPDP Act 2023 <span className="text-saffron">Security Architecture</span> & Ephemeral Ledger
           </h2>
-          <p className="text-slate-400 max-w-2xl mx-auto text-lg">
-            Zero-retention ephemeral memory architecture, cryptographic audit chain, and hard physician confirmation gates — guaranteeing strict Indian regulatory compliance.
+          <p className={`max-w-2xl mx-auto text-sm sm:text-base leading-relaxed ${isLight ? 'text-slate-600' : 'text-slate-400'}`}>
+            Zero patient data retained on terminal storage. Every intake step generates a cryptographically verifiable SHA-256 audit entry, followed by immediate volatile RAM zeroization.
           </p>
         </motion.div>
 
         {/* Tab Buttons */}
-        <div className="flex flex-wrap justify-center gap-3 mb-10">
+        <div className="flex flex-wrap justify-center gap-2.5 mb-10">
           {[
             { id: "ledger", label: "⛓️ Cryptographic Audit Ledger", sub: "SHA-256 Hash Chain" },
             { id: "dpdp", label: "📜 DPDP Act 2023 Matrix", sub: "7 Statutory Principles" },
@@ -230,14 +234,16 @@ export default function SecurityComplianceSection() {
             <button
               key={tab.id}
               onClick={() => setActiveTab(tab.id)}
-              className={`px-5 py-3 rounded-xl text-sm font-semibold transition-all duration-200 border ${
+              className={`px-4 sm:px-5 py-3 rounded-2xl text-xs sm:text-sm font-semibold transition-all duration-200 border cursor-pointer ${
                 activeTab === tab.id
-                  ? "bg-emerald-500 text-slate-900 border-emerald-400 shadow-lg shadow-emerald-500/30 font-bold"
-                  : "bg-slate-900/80 text-slate-300 border-slate-700 hover:border-emerald-500/50"
+                  ? "bg-emerald-500 text-slate-950 border-emerald-400 shadow-lg shadow-emerald-500/20 font-bold scale-[1.02]"
+                  : isLight
+                  ? "bg-white text-slate-700 border-slate-200 hover:border-slate-300 shadow-sm"
+                  : "bg-slate-900/80 text-slate-300 border-slate-800 hover:border-slate-700"
               }`}
             >
               <div>{tab.label}</div>
-              <div className={`text-xs mt-0.5 ${activeTab === tab.id ? "text-slate-800 font-semibold" : "text-slate-500"}`}>{tab.sub}</div>
+              <div className={`text-[11px] mt-0.5 font-mono ${activeTab === tab.id ? "text-slate-900 font-semibold" : isLight ? "text-slate-500" : "text-slate-500"}`}>{tab.sub}</div>
             </button>
           ))}
         </div>

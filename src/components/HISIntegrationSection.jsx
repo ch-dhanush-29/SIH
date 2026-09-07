@@ -213,7 +213,8 @@ const COLOR_MAP = {
   slate: { border: "border-slate-500/40", bg: "bg-slate-500/10", text: "text-slate-400", badge: "bg-slate-500/20 text-slate-300 border-slate-500/40" },
 };
 
-export default function HISIntegrationSection() {
+export default function HISIntegrationSection({ theme = 'dark' }) {
+  const isLight = theme === 'light'
   const [selected, setSelected] = useState(HIS_SYSTEMS[0]);
   const [showPayload, setShowPayload] = useState(false);
   const [submitting, setSubmitting] = useState(false);
@@ -232,32 +233,37 @@ export default function HISIntegrationSection() {
   }
 
   return (
-    <section id="his-integration" className="py-20 bg-gradient-to-b from-blue-950 to-slate-950 relative overflow-hidden">
-      {/* Background grid */}
-      <div className="absolute inset-0 pointer-events-none opacity-20"
-        style={{ backgroundImage: "linear-gradient(rgba(99,102,241,.15) 1px, transparent 1px), linear-gradient(90deg, rgba(99,102,241,.15) 1px, transparent 1px)", backgroundSize: "48px 48px" }} />
-
+    <section 
+      id="his-integration" 
+      className={`py-24 border-b transition-colors relative overflow-hidden ${
+        isLight ? 'bg-white border-slate-200 text-slate-900' : 'bg-slate-950 border-slate-800 text-white'
+      }`}
+    >
       <div className="max-w-6xl mx-auto px-4 relative">
         {/* Header */}
         <motion.div initial={{ opacity: 0, y: 30 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true }} className="text-center mb-12">
-          <div className="inline-flex items-center gap-2 bg-indigo-500/10 border border-indigo-500/30 px-4 py-1.5 rounded-full text-indigo-400 text-sm font-medium mb-5">
-            <span className="w-2 h-2 bg-indigo-400 rounded-full animate-pulse" />
+          <div className={`inline-flex items-center gap-2 border px-4 py-1.5 rounded-full text-xs font-mono font-bold mb-4 ${
+            isLight ? 'bg-emerald-50 border-emerald-200 text-emerald-900' : 'bg-slate-900 border-slate-800 text-emerald-400'
+          }`}>
+            <span className="w-2 h-2 bg-emerald-400 rounded-full animate-pulse" />
             FHIR R4 · HL7 v2.5 · OpenMRS · Bahmni · ABDM
           </div>
-          <h2 className="text-4xl font-bold text-white mb-4">
-            Hospital Information System <span className="text-indigo-400">(HIS / EMR)</span> Integration
+          <h2 className="text-3xl sm:text-4xl font-extrabold font-display tracking-tight mb-3">
+            Hospital Information System <span className="text-saffron">(HIS / EMR)</span> Integration
           </h2>
-          <p className="text-slate-400 max-w-2xl mx-auto text-lg">
+          <p className={`max-w-2xl mx-auto text-sm sm:text-base leading-relaxed ${isLight ? 'text-slate-600' : 'text-slate-400'}`}>
             MediKiosk routes clinical summaries to any Indian hospital HIS — from ABDM-compliant FHIR endpoints to Bahmni PHC deployments — with mandatory physician confirmation before every data transfer.
           </p>
         </motion.div>
 
         {/* Physician Confirmation Gate */}
         <motion.div initial={{ opacity: 0, y: 20 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true }}
-          className="bg-slate-900/80 border border-amber-500/30 rounded-2xl p-5 mb-8 flex flex-col md:flex-row items-start md:items-center gap-4">
+          className={`border rounded-2xl p-5 mb-8 flex flex-col md:flex-row items-start md:items-center gap-4 ${
+            isLight ? 'bg-amber-50/60 border-amber-300 shadow-sm' : 'bg-slate-900/80 border-amber-500/30'
+          }`}>
           <div className="flex-1">
             <div className="flex items-center gap-2 mb-1">
-              <span className="text-amber-400 text-xl">🔒</span>
+              <span className="text-amber-500 text-xl" aria-hidden="true">🔒</span>
               <span className="text-white font-bold">DPDP Act 2023 §7 — Mandatory Physician Confirmation Gate</span>
             </div>
             <p className="text-slate-400 text-sm">
@@ -279,26 +285,32 @@ export default function HISIntegrationSection() {
         <div className="grid md:grid-cols-5 gap-6">
           {/* HIS System Selector */}
           <div className="md:col-span-2 space-y-3">
-            <div className="text-slate-400 text-xs font-bold uppercase tracking-wider mb-3">Select HIS / EMR Target</div>
+            <div className={`text-xs font-mono font-bold uppercase tracking-wider mb-3 ${isLight ? 'text-slate-500' : 'text-slate-400'}`}>
+              Select HIS / EMR Target
+            </div>
             {HIS_SYSTEMS.map((sys) => {
               const c = COLOR_MAP[sys.color];
               const isActive = selected.id === sys.id;
               return (
                 <button key={sys.id} onClick={() => { setSelected(sys); setShowPayload(false); setSubmitted(false); }}
-                  className={`w-full text-left p-4 rounded-xl border transition-all ${
-                    isActive ? `${c.bg} ${c.border} shadow-lg` : "bg-slate-900/60 border-slate-700 hover:border-slate-500"
+                  className={`w-full text-left p-4 rounded-2xl border transition-all cursor-pointer ${
+                    isActive 
+                      ? `${c.bg} ${c.border} shadow-md scale-[1.01]` 
+                      : isLight 
+                      ? "bg-slate-50 border-slate-200 hover:border-slate-300 text-slate-900" 
+                      : "bg-slate-900/60 border-slate-800 hover:border-slate-700 text-white"
                   }`}
                 >
                   <div className="flex items-center gap-3">
-                    <span className="text-2xl">{sys.icon}</span>
+                    <span className="text-2xl" aria-hidden="true">{sys.icon}</span>
                     <div className="flex-1 min-w-0">
                       <div className="flex items-center gap-2 flex-wrap">
-                        <span className={`font-bold text-sm ${isActive ? c.text : "text-white"}`}>{sys.name}</span>
+                        <span className={`font-bold text-sm ${isActive ? c.text : isLight ? "text-slate-900" : "text-white"}`}>{sys.name}</span>
                         {sys.indianStandard && (
-                          <span className="text-[10px] bg-orange-500/20 text-orange-400 border border-orange-500/30 px-1.5 py-0.5 rounded-full font-bold">🇮🇳 NHA</span>
+                          <span className="text-[10px] bg-saffron/20 text-saffron border border-saffron/30 px-1.5 py-0.5 rounded-full font-bold">🇮🇳 NHA</span>
                         )}
                       </div>
-                      <div className="text-slate-500 text-xs truncate">{sys.badge}</div>
+                      <div className={`text-xs truncate ${isLight ? 'text-slate-500' : 'text-slate-400'}`}>{sys.badge}</div>
                     </div>
                   </div>
                 </button>
@@ -310,7 +322,9 @@ export default function HISIntegrationSection() {
           <div className="md:col-span-3">
             <AnimatePresence mode="wait">
               <motion.div key={selected.id} initial={{ opacity: 0, x: 20 }} animate={{ opacity: 1, x: 0 }} exit={{ opacity: 0, x: -20 }}
-                className={`bg-slate-900/80 border ${colors.border} rounded-2xl p-6`}>
+                className={`border ${colors.border} rounded-3xl p-6 ${
+                  isLight ? 'bg-white shadow-xl' : 'bg-slate-900/80'
+                }`}>
 
                 {/* System Header */}
                 <div className="flex items-start gap-4 mb-5">
